@@ -109,8 +109,7 @@ class VolumeCharacteristic(Characteristic):
 
     def WriteValue(self, value, options):
         print("write detected")
-        decoded = value.decode("utf-8")
-        print(decoded)
+        print(repr(value))
         logger.info("volume write: " + repr(decoded))
         self.value = value
 
