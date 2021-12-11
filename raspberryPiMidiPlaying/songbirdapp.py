@@ -101,7 +101,6 @@ class VolumeCharacteristic(Characteristic):
         )
 
         self.value = []
-        print("init successful")
         self.add_descriptor(CharacteristicUserDescriptionDescriptor(bus, 1, self))
 
     def ReadValue(self, options):
@@ -110,7 +109,8 @@ class VolumeCharacteristic(Characteristic):
 
     def WriteValue(self, value, options):
         print("write detected")
-        logger.info("volume write: " + repr(value))
+        decoded = value.decode("utf-8")
+        logger.info("volume write: " + repr(decoded))
         self.value = value
 
 class TempoCharacteristic(Characteristic):
