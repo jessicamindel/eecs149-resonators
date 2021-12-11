@@ -97,7 +97,7 @@ class VolumeCharacteristic(Characteristic):
 
     def __init__(self, bus, index, service):
         Characteristic.__init__(
-            self, bus, index, self.uuid, ["encrypt-read", "encrypt-write"], service,
+            self, bus, index, self.uuid, ["read", "write"], service,
         )
 
         self.value = []
@@ -119,7 +119,7 @@ class TempoCharacteristic(Characteristic):
 
     def __init__(self, bus, index, service):
         Characteristic.__init__(
-            self, bus, index, self.uuid, ["secure-read", "secure-write"], service,
+            self, bus, index, self.uuid, ["read", "write"], service,
         )
 
         self.value = []
