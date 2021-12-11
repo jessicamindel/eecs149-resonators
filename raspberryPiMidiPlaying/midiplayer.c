@@ -2,9 +2,39 @@
 /* usage: (program) (sf2 file) (midi file) (tick to start at)
     basically play it until you want to, it listens at every tick for a stop signal, and then it stops.
     if you want to resume, main computer simply sends the tick to restart at (which is useful, since stops can be delayed due to latency)
+
+    in order to schedule interrupts, there has to be some external program also connected to this that can send in inputs during execution.
+    Interrupt handler is already setup from backend.
 */
 
 #include <fluidsynth.h>
+#include <Python.h>
+
+static int *init_player(PyObject *self, char** arg) {
+    //does preloading to minimize latency on start.
+    return 0
+}
+
+static int *start_playing(PyObject *self, int tick) {
+    //starts it (uses fluid_player_seek, and then fluid_player_play)
+    return 0
+}
+
+static int *stop_playing(PyObject *self) {
+    //stops it (uses fluid_player_stop, and associated cleanups)
+    return 0
+}
+
+static int *adjust_volume(PyObject *self, ) {
+    //increase or decrease volume based on input (uses extern)
+    return 0
+}
+
+static int *adjust_tempo(PyObject *self, int bpm) {
+    //increase or decrease tempo based on input (uses fluidsynth_set_bpm)
+    return 0
+}
+
 
 int main(int argc, char** argv) 
 {
@@ -47,5 +77,13 @@ void interrupt_handler(fluid_player_t* player, fluid_settings_t* settings, fluid
         delete_fluid_player(player);
         delete_fluid_synth(synth);
         delete_fluid_settings(settings);
+    }
+    //this one could handle drumstick imu inputs for volume control
+    if(false) {
+        fluid_synth_set_gain(synth, 0)
+    }
+    //this one could handle drumstick imu input for mod... i actually dunno what it does but maybe yall can figure it out
+    if(false) {
+        fluid_synth_add_mod(synth, mod, 0)
     }
 }

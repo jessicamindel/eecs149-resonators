@@ -1,0 +1,37 @@
+body {
+  margin: 0;
+  font-family: 'GTPressura', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+@font-face {
+  font-family: 'GTPressura';
+  src: url('GTPressura.woff2') format('woff2'),
+      url('GTPressura.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'GTPressuraMonoTrial';
+  src: url('GTPressuraMonoTrial-Regular.woff2') format('woff2'),
+      url('GTPressuraMonoTrial-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+code {
+  font-family: 'GTPressuraMonoTrial';
+}
+
+/* Original code format
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+*/
