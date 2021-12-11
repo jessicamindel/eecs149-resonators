@@ -88,8 +88,48 @@ class SongbirdService(Service):
 
     def __init__(self, bus, index):
         Service.__init__(self, bus, index, self.SONGBIRD_SVC_UUID, True)
-        self.add_characteristic(VolumeCharacteristic(bus, 0, self))
-        self.add_characteristic(TempoCharacteristic(bus, 1, self))
+        self.add_characteristic(StartCharacteristic(bus, 0, self))
+        self.add_characteristic(StopCharacteristic(bus, 1, self))
+        self.add_characteristic(VolumeCharacteristic(bus, 2, self))
+        self.add_characteristic(TempoCharacteristic(bus, 3, self))
+
+class StartCharacteristic(Characteristic):
+    uuid = "10f4c060-fdd1-49a5-898e-ab924709a558"
+    description = b"Start at specific timestamp."
+
+    def __init__(self, bus, index, service):
+        Characteristic.__init__(
+            self, bus, index, self.uuid, ["read", "write"], service,
+        )
+
+        self.value = []
+        self.add_descriptor(CharacteristicUserDescriptionDescriptor(bus, 1, self))
+
+    def ReadValue(self, options):
+        logger.info("volume: " + repr(self.value))
+        return self.value
+
+    def WriteValue(self, value, options):
+        self.value = int(value) #if this doesn't work, int(bytes(value))
+
+class StopCharacteristic(Characteristic):
+    uuid = "10f4c060-fdd1-49a5-898e-bb924709a558"
+    description = b"Immediate stop."
+
+    def __init__(self, bus, index, service):
+        Characteristic.__init__(
+            self, bus, index, self.uuid, ["read", "write"], service,
+        )
+
+        self.value = []
+        self.add_descriptor(CharacteristicUserDescriptionDescriptor(bus, 1, self))
+
+    def ReadValue(self, options):
+        logger.info("volume: " + repr(self.value))
+        return self.value
+
+    def WriteValue(self, value, options):
+        self.value = int(value) #if this doesn't work, int(bytes(value))
 
 class VolumeCharacteristic(Characteristic):
     uuid = "10f4c060-fdd1-49a5-898e-db924709a558"
@@ -108,9 +148,7 @@ class VolumeCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
-        print(int(bytes(value)))
-        logger.info("volume write: " + repr(decoded))
-        self.value = value
+        self.value = int(value) #if this doesn't work, int(bytes(value))
 
 class TempoCharacteristic(Characteristic):
     uuid = "10f4c060-fdd1-49a5-898e-eb924709a558"
@@ -129,8 +167,7 @@ class TempoCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
-        logger.info("tempo write: " + repr(value))
-        self.value = value
+        self.value = int(value)
 
 class CharacteristicUserDescriptionDescriptor(Descriptor):
     """

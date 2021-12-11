@@ -8,6 +8,33 @@
 */
 
 #include <fluidsynth.h>
+#include <Python.h>
+
+static int *init_player(PyObject *self, char** arg) {
+    //does preloading to minimize latency on start.
+    return 0
+}
+
+static int *start_playing(PyObject *self, int tick) {
+    //starts it (uses fluid_player_seek, and then fluid_player_play)
+    return 0
+}
+
+static int *stop_playing(PyObject *self) {
+    //stops it (uses fluid_player_stop, and associated cleanups)
+    return 0
+}
+
+static int *adjust_volume(PyObject *self, ) {
+    //increase or decrease volume based on input (uses extern)
+    return 0
+}
+
+static int *adjust_tempo(PyObject *self, int bpm) {
+    //increase or decrease tempo based on input (uses fluidsynth_set_bpm)
+    return 0
+}
+
 
 int main(int argc, char** argv) 
 {
