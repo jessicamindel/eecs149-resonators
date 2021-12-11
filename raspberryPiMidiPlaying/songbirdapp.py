@@ -146,7 +146,7 @@ class CharacteristicUserDescriptionDescriptor(Descriptor):
 
         self.value = array.array("B", characteristic.description)
         self.value = self.value.tolist()
-        Descriptor.__init__(self, bus, index, self.CUD_UUID, ["read"], characteristic)
+        Descriptor.__init__(self, bus, index, self.CUD_UUID, ["read", "write"], characteristic)
 
     def ReadValue(self, options):
         return self.value
