@@ -83,14 +83,6 @@ def register_app_error_cb(error):
     logger.critical("Failed to register application: " + str(error))
     mainloop.quit()
 
-def register_ad_cb():
-    logger.info("Advertisement registered")
-
-
-def register_ad_error_cb(error):
-    logger.critical("Failed to register advertisement: " + str(error))
-    mainloop.quit()
-
 class SongbirdService(Service):
     SONGBIRD_SVC_UUID = "314b2cb7-d379-474f-832f-6f833657e7e2"
 
@@ -141,8 +133,6 @@ class TempoCharacteristic(Characteristic):
         logger.info("tempo write: " + repr(value))
         self.value = value
 
-AGENT_PATH = "/home/pi/songbird/ble"
-
 class CharacteristicUserDescriptionDescriptor(Descriptor):
     """
     Writable CUD descriptor.
@@ -177,6 +167,16 @@ class SongbirdAdvertisement(Advertisement):
         self.add_local_name("Songbird")
         self.include_tx_power = True
 
+def register_ad_cb():
+    logger.info("Advertisement registered")
+
+
+def register_ad_error_cb(error):
+    logger.critical("Failed to register advertisement: " + str(error))
+    mainloop.quit()
+
+AGENT_PATH = "/home/pi/songbird/ble"
+
 def main():
     global mainloop
 
@@ -208,7 +208,7 @@ def main():
     agent = Agent(bus, AGENT_PATH)
 
     app = Application(bus)
-    app.add_service(SongbirdService(bus, 1))
+    app.add_service(SongbirdService(bus, 2))
 
     mainloop = MainLoop()
 
