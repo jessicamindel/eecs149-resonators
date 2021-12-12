@@ -36,9 +36,13 @@ static int songbirdControl_init(PyObject *self, PyObject *args, PyObject *kwds) 
         fluid_synth_sfload((*new_songbird).synth, PyByteArray_AsString(arg1), 1);
         fluid_player_add((*new_songbird).player, PyByteArray_AsString(arg2));
     } else {
+        printf("here3!\n");
+        fflush(stdout);
         PyErr_SetString(PyExc_TypeError, "Invalid arguments");
         return -1;
     }
+    printf("here4!\n");
+    fflush(stdout);
     (*new_songbird).adriver = new_fluid_audio_driver((*new_songbird).settings, (*new_songbird).synth);
     return 0;
 }
