@@ -7,6 +7,7 @@ import dbus.exceptions
 import dbus.mainloop.glib
 import dbus.service
 import midiplayer as mp
+import argparse
 
 from ble import (
     Advertisement,
@@ -19,7 +20,6 @@ from ble import (
 )
 
 import struct
-import requests
 import array
 from enum import Enum
 
@@ -274,8 +274,16 @@ def main(*args, **kwargs):
     )
 
     agent_manager.RequestDefaultAgent(AGENT_PATH)
-    print(args, *kwargs)
-    songbird = mp.songbirdControl(*args, **kwargs)
+
+    parser = argparse.ArgumentParser(description='Songbird parser')
+    parser.add_argument('soundfont', type=string,
+                    help='soundfont to use')
+    parser.add_argument('midifile', type=string,
+                    help='midi file to play')
+
+    args = parser.parse_args()
+
+    songbird = mp.songbirdControl((args.soundfont, args.midifile))
     SongbirdService.Songbird = songbird
 
     mainloop.run()
@@ -285,4 +293,4 @@ def main(*args, **kwargs):
 
 
 if __name__ == "__main__":
-    main(*args)
+    main()
