@@ -8,6 +8,7 @@
 */
 
 #include <fluidsynth.h>
+#include <stdio.h>
 #include <Python.h>
 #include "midiplayer.h"
 
