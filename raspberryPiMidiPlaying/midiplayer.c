@@ -9,28 +9,30 @@
 
 #include <fluidsynth.h>
 #include <Python.h>
+#include "midiplayer.h"
 
-static int *init_player(PyObject *self, char** arg) {
+
+static int *songbirdControl_init_player(PyObject *self, char** arg) {
     //does preloading to minimize latency on start.
     return 0
 }
 
-static int *start_playing(PyObject *self, int tick) {
+static int *songbirdControl_start_playing(PyObject *self, int tick) {
     //starts it (uses fluid_player_seek, and then fluid_player_play)
     return 0
 }
 
-static int *stop_playing(PyObject *self) {
+static int *songbirdControl_stop_playing(PyObject *self) {
     //stops it (uses fluid_player_stop, and associated cleanups)
     return 0
 }
 
-static int *adjust_volume(PyObject *self, ) {
-    //increase or decrease volume based on input (uses extern)
+static int *songbirdControl_adjust_volume(PyObject *self, int vol) {
+    //increase or decrease volume based on input (uses fluid_synth_set_gain)
     return 0
 }
 
-static int *adjust_tempo(PyObject *self, int bpm) {
+static int *songbirdControl_adjust_tempo(PyObject *self, int bpm) {
     //increase or decrease tempo based on input (uses fluidsynth_set_bpm)
     return 0
 }
@@ -86,4 +88,68 @@ void interrupt_handler(fluid_player_t* player, fluid_settings_t* settings, fluid
     if(false) {
         fluid_synth_add_mod(synth, mod, 0)
     }
+}
+
+/*
+ * for reference - Jet
+ * Create an array of PyMethodDef structs to hold the instance methods.
+ * Name the python function corresponding to Matrix61c_get_value as "get" and Matrix61c_set_value
+ * as "set"
+ * You might find this link helpful: https://docs.python.org/3.6/c-api/structures.html
+ */
+static PyMethodDef Matrix61c_methods[] = {
+    /* TODO: YOUR CODE HERE */
+    {"init_player", (PyCFunction) songbirdControl_init_player, METH_VARARGS, NULL},
+    {"start_playing", (PyCFunction) songbirdControl_start_playing, METH_VARARGS, NULL},
+    {"stop_playing", (PyCFunction) songbirdControl_stop_playing, METH_VARARGS, NULL},
+    {"adjust_volume", (PyCFunction) songbirdControl_adjust_volume, METH_VARARGS, NULL},
+    {"adjust_tempo", (PyCFunction) songbirdControl_adjust_tempo, METH_VARARGS, NULL},
+    {NULL, NULL, 0, NULL}
+};
+
+static PyMemberDef songbirdControl_members[] = {
+    {NULL}  /* Sentinel */
+};
+
+static PyTypeObject midiplayerType = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = "songbirdControl",
+    .tp_basicsize = sizeof(songbirdControl),
+    .tp_dealloc = (destructor)songbirdControl_dealloc,
+    .tp_repr = (reprfunc)songbirdControl_repr,
+    .tp_as_number = &songbirdControl_as_number,
+    .tp_flags = Py_TPFLAGS_DEFAULT |
+        Py_TPFLAGS_BASETYPE,
+    .tp_doc = "songbirdControl objects",
+    .tp_methods = songbirdControl_methods,
+    .tp_members = songbirdControl_members,
+    .tp_as_mapping = &songbirdControl_mapping,
+    .tp_init = (initproc)songbirdControl_init,
+    .tp_new = songbirdControl_new
+};
+
+static struct PyModuleDef midiplayermodule = {
+    PyModuleDef_HEAD_INIT,
+    "midiplayer",
+    "Midiplayer operations",
+    -1,
+    songbirdControl_class_methods
+};
+
+/* Initialize the midiplayer module */
+PyMODINIT_FUNC PyInit_midiplayer(void) {
+    PyObject* m;
+
+    if (PyType_Ready(&midiplayerType) < 0)
+        return NULL;
+
+    m = PyModule_Create(&midiplayermodule);
+    if (m == NULL)
+        return NULL;
+
+    Py_INCREF(&midiplayerType);
+    PyModule_AddObject(m, "Midi Player", (PyObject *)&midiplayerType);
+    printf("Successful import of Midi Player!\n");
+    fflush(stdout);
+    return m;
 }
