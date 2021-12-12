@@ -66,7 +66,7 @@ static int *songbirdControl_adjust_volume(PyObject *self, PyObject *pyVol) {
 static int *songbirdControl_adjust_tempo(PyObject *self, PyObject *pyBPM) {
     //increase or decrease tempo based on input (uses fluidsynth_set_bpm)
     int bpm = PyLong_AsLong(pyBPM);
-    fluidsynth_set_tempo(((songbirdControl *)self)->player, FLUID_PLAYER_TEMPO_EXTERNAL_BPM,bpm);
+    fluidsynth_set_tempo(((songbirdControl *)self)->player, 1,bpm);
     return 0;
 }
 
