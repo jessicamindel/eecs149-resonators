@@ -23,7 +23,9 @@ static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *m
     (*new_songbird).synth = new_fluid_synth((*new_songbird).settings);
     (*new_songbird).player = new_fluid_player((*new_songbird).synth);
 
-    printf("%s",PyBytes_FromString(*soundfont));
+    PyObject *encodedsf = PyUnicode_AsEncodedString(soundfont, "UTF-8", "strict");
+
+    printf("%s",PyBytes_FromString(encodedsf));
 
     fluid_synth_sfload((*new_songbird).synth, PyBytes_FromString(soundfont), 1);
     fluid_player_add((*new_songbird).player, PyBytes_FromString(midifile));
