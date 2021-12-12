@@ -101,7 +101,7 @@ static PyMethodDef songbirdControl_methods[] = {
 
 static PyTypeObject midiplayerType = {
     PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = "songbirdControl",
+    .tp_name = "midiplayer.songbirdControl",
     .tp_basicsize = sizeof(songbirdControl),
     .tp_dealloc = (destructor)songbirdControl_dealloc,
     .tp_repr = (reprfunc)songbirdControl_repr,
