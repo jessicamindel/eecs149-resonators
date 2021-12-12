@@ -29,13 +29,15 @@ static int songbirdControl_init(PyObject *self, PyObject *args, PyObject *kwds) 
     printf("here2!\n");
     fflush(stdout);
 
-    PyObject *arg1 = NULL;
-    PyObject *arg2 = NULL;
+    PyObject arg1 = NULL;
+    PyObject arg2 = NULL;
 
     if (PyArg_UnpackTuple(args, "args", 2, 2, &arg1, &arg2)) {
         fluid_synth_sfload((*new_songbird).synth, PyByteArray_AsString(arg1), 1);
         fluid_player_add((*new_songbird).player, PyByteArray_AsString(arg2));
     } else {
+        printf("%s",arg1);
+        printf("%s",arg2)
         printf("here3!\n");
         fflush(stdout);
         PyErr_SetString(PyExc_TypeError, "Invalid arguments");
