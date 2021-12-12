@@ -24,16 +24,16 @@ static int songbirdControl_init(PyObject *self, PyObject *args, PyObject *kwds) 
 
     PyObject *arg1 = NULL;
     PyObject *arg2 = NULL;
-    
+
     if (PyArg_UnpackTuple(args, "args", 1, 2, &arg1, &arg2)) {
-        fluid_synth_sfload((*new_songbird).synth, PyString_FromString(arg1), 1);
-        fluid_player_add((*new_songbird).player, PyString_FromString(arg2));
+        fluid_synth_sfload((*new_songbird).synth, PyUnicode_FromString(arg1), 1);
+        fluid_player_add((*new_songbird).player, PyUnicode_FromString(arg2));
     } else {
         PyErr_SetString(PyExc_TypeError, "Invalid arguments");
         return -1;
     }
 
-    (*new_songbird)->adriver = new_fluid_audio_driver((*new_songbird).settings, (*new_songbird).synth);
+    (*new_songbird).adriver = new_fluid_audio_driver((*new_songbird).settings, (*new_songbird).synth);
 
     return 0;
 }
@@ -41,32 +41,32 @@ static int songbirdControl_init(PyObject *self, PyObject *args, PyObject *kwds) 
 static int *songbirdControl_start_playing(PyObject *self, PyObject *pyTick) {
     //starts it (uses fluid_player_seek, and then fluid_player_play)
     int tick = PyLong_AsLong(pyTick);
-    fluid_player_seek(((songbirdControl *)self).player, tick);
-    fluid_player_play(((songbirdControl *)self).player);
+    fluid_player_seek(((songbirdControl *)self)->player, tick);
+    fluid_player_play(((songbirdControl *)self)->player);
     return 0;
 }
 
 static int *songbirdControl_stop_playing(PyObject *self) {
     //stops it (uses fluid_player_stop, and associated cleanups)
-    fluid_player_stop(((songbirdControl *)self).player);
-    delete_fluid_audio_driver(((songbirdControl *)self).adriver);
-    delete_fluid_player(((songbirdControl *)self).player);
-    delete_fluid_synth(((songbirdControl *)self).synth);
-    delete_fluid_settings(((songbirdControl *)self).settings);
+    fluid_player_stop(((songbirdControl *)self)->player);
+    delete_fluid_audio_driver(((songbirdControl *)self)->adriver);
+    delete_fluid_player(((songbirdControl *)self)->player);
+    delete_fluid_synth(((songbirdControl *)self)->synth);
+    delete_fluid_settings(((songbirdControl *)self)->settings);
     return 0;
 }
 
 static int *songbirdControl_adjust_volume(PyObject *self, PyObject *pyVol) {
     //increase or decrease volume based on input (uses fluid_synth_set_gain)
     float vol = PyFloat_AsDouble(pyVol);
-    fluid_synth_set_gain(((songbirdControl *)self).synth, vol);
+    fluid_synth_set_gain(((songbirdControl *)self)->synth, vol);
     return 0;
 }
 
 static int *songbirdControl_adjust_tempo(PyObject *self, PyObject *pyBPM) {
     //increase or decrease tempo based on input (uses fluidsynth_set_bpm)
     int bpm = PyLong_AsLong(pyBPM);
-    fluidsynth_set_bpm(((songbirdControl *)self).player, bpm);
+    fluidsynth_set_bpm(((songbirdControl *)self)->player, bpm);
     return 0;
 }
 
@@ -92,16 +92,11 @@ static PyMethodDef songbirdControl_class_methods[] = {
 
 static PyMethodDef songbirdControl_methods[] = {
     /* TODO: YOUR CODE HERE */
-    {"init_player", (PyCFunction) songbirdControl_init_player, METH_VARARGS, NULL},
     {"start_playing", (PyCFunction) songbirdControl_start_playing, METH_VARARGS, NULL},
     {"stop_playing", (PyCFunction) songbirdControl_stop_playing, METH_VARARGS, NULL},
     {"adjust_volume", (PyCFunction) songbirdControl_adjust_volume, METH_VARARGS, NULL},
     {"adjust_tempo", (PyCFunction) songbirdControl_adjust_tempo, METH_VARARGS, NULL},
     {NULL, NULL, 0, NULL}
-};
-
-static PyMemberDef songbirdControl_members[] = {
-    {NULL}  /* Sentinel */
 };
 
 static PyTypeObject midiplayerType = {
@@ -114,7 +109,6 @@ static PyTypeObject midiplayerType = {
         Py_TPFLAGS_BASETYPE,
     .tp_doc = "songbirdControl objects",
     .tp_methods = songbirdControl_methods,
-    .tp_members = songbirdControl_members,
     .tp_init = (initproc)songbirdControl_init,
     .tp_new = songbirdControl_new
 };
