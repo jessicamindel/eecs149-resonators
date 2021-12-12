@@ -51,13 +51,18 @@ function TempoControl(debug = false) {
             /* Error condition; restart. */
             setBPM(0);
             setTaps(0);
-        } else if (taps == 1 || bpm < 30) {
+        } else if (taps === 1 || bpm < 30) {
             /* First tap. */
             setBPM(TPM);
         } else {
             /* A later tap. */
             setBPM(newBPM);
         }
+    }
+
+    const sendBPM = () => {
+        axios.post('http://localhost:5000/tempo/' + parseInt(bpm))
+        .then(response => {console.log(response)})
     }
 
     const [diff, setDiff] = useState(0);
@@ -73,7 +78,7 @@ function TempoControl(debug = false) {
     return (
         <div className="tempo">
             <p style={{lineHeight:0}}>
-                {bpm > 30 ? bpm.toFixed(1) : "X"}
+                {bpm > 30 ? bpm.toFixed(1) : "⏹"}
             </p>
             <p style={{lineHeight:0}}><i>BPM</i></p>
             {debug && 
@@ -86,11 +91,18 @@ function TempoControl(debug = false) {
                 </div>
             }
 
-            <hr />
-
-            <button onClick = {updateBPM}>
-                Tap repeatedly to set BPM
-            </button>
+            <hr style={{width: 150}} />
+            <div className="stacked">
+            <div className="side-by-side">
+                <button onClick = {updateBPM} >
+                    Tap
+                </button>
+                <hr style={{width: 2, margin: 7}} />
+                <button onClick = {sendBPM}>
+                    Set
+                </button>
+            </div>
+            </div>
         </div>
     );
 }
