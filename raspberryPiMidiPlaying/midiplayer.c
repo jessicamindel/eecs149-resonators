@@ -17,6 +17,7 @@ static int songbirdControl_init(PyObject *self, PyObject *args, PyObject *kwds) 
     //fill this with the structure init
     songbirdControl *new_songbird;
     new_songbird = malloc(sizeof(songbirdControl));
+    printf("here1");
 
     (*new_songbird).settings = new_fluid_settings();
     (*new_songbird).synth = new_fluid_synth((*new_songbird).settings);
@@ -24,6 +25,7 @@ static int songbirdControl_init(PyObject *self, PyObject *args, PyObject *kwds) 
 
     PyObject *arg1 = NULL;
     PyObject *arg2 = NULL;
+    printf("here2");
 
     if (PyArg_UnpackTuple(args, "args", 1, 2, &arg1, &arg2)) {
         fluid_synth_sfload((*new_songbird).synth, PyByteArray_AsString(arg1), 1);
@@ -32,9 +34,9 @@ static int songbirdControl_init(PyObject *self, PyObject *args, PyObject *kwds) 
         PyErr_SetString(PyExc_TypeError, "Invalid arguments");
         return -1;
     }
-
+    printf("here3");
     (*new_songbird).adriver = new_fluid_audio_driver((*new_songbird).settings, (*new_songbird).synth);
-
+    printf("here4");
     return 0;
 }
 
