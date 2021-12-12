@@ -14,7 +14,7 @@
 
 static PyTypeObject midiplayerType;
 
-static int songbirdControl_init(PyObject *self, PyObject *args, PyObject *kwds) {
+static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *midifile) {
     //fill this with the structure init
     songbirdControl *new_songbird;
     new_songbird = malloc(sizeof(songbirdControl));
@@ -23,21 +23,11 @@ static int songbirdControl_init(PyObject *self, PyObject *args, PyObject *kwds) 
     (*new_songbird).synth = new_fluid_synth((*new_songbird).settings);
     (*new_songbird).player = new_fluid_player((*new_songbird).synth);
 
-    char* arg1 = NULL;
-    char* arg2 = NULL;
+    printf("%s",PyBytes_FromString(soundfont));
 
-    if (PyArg_ParseTuple(args, "ss", &arg1, &arg2)) {
-        printf("made it here");
-        fluid_synth_sfload((*new_songbird).synth, arg1, 1);
-        fluid_player_add((*new_songbird).player, arg2);
-    } else {
-        printf("%s",arg1);
-        printf("%s",arg2);
-        printf("failed!\n");
-        fflush(stdout);
-        PyErr_SetString(PyExc_TypeError, "Invalid arguments");
-        return -1;
-    }
+    fluid_synth_sfload((*new_songbird).synth, PyBytes_FromString(soundfont), 1);
+    fluid_player_add((*new_songbird).player, PyBytes_FromString(midifile));
+
     printf("here4!\n");
     fflush(stdout);
     (*new_songbird).adriver = new_fluid_audio_driver((*new_songbird).settings, (*new_songbird).synth);
