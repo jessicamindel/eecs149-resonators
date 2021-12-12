@@ -26,8 +26,8 @@ static int songbirdControl_init(PyObject *self, PyObject *args, PyObject *kwds) 
     PyObject *arg2 = NULL;
 
     if (PyArg_UnpackTuple(args, "args", 1, 2, &arg1, &arg2)) {
-        fluid_synth_sfload((*new_songbird).synth, PyUnicode_FromString(arg1), 1);
-        fluid_player_add((*new_songbird).player, PyUnicode_FromString(arg2));
+        fluid_synth_sfload((*new_songbird).synth, PyByteArray_AsString(arg1), 1);
+        fluid_player_add((*new_songbird).player, PyByteArray_AsString(arg2));
     } else {
         PyErr_SetString(PyExc_TypeError, "Invalid arguments");
         return -1;
@@ -66,7 +66,7 @@ static int *songbirdControl_adjust_volume(PyObject *self, PyObject *pyVol) {
 static int *songbirdControl_adjust_tempo(PyObject *self, PyObject *pyBPM) {
     //increase or decrease tempo based on input (uses fluidsynth_set_bpm)
     int bpm = PyLong_AsLong(pyBPM);
-    fluidsynth_set_bpm(((songbirdControl *)self)->player, bpm);
+    fluidsynth_set_tempo(((songbirdControl *)self)->player, FLUID_PLAYER_TEMPO_EXTERNAL_BPM,bpm);
     return 0;
 }
 
