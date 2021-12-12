@@ -281,6 +281,8 @@ def main(*args, **kwargs):
 
     args = parser.parse_args()
 
+    print(args.soundfont)
+    
     songbird = mp.songbirdControl((args.soundfont, args.midifile))
     SongbirdService.Songbird = songbird
 
