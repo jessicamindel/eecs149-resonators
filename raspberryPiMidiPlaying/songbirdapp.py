@@ -86,6 +86,7 @@ def register_app_error_cb(error):
 
 class SongbirdService(Service):
     SONGBIRD_SVC_UUID = "314b2cb7-d379-474f-832f-6f833657e7e2"
+    songbird = None
 
     def __init__(self, bus, index):
         Service.__init__(self, bus, index, self.SONGBIRD_SVC_UUID, True)
@@ -111,6 +112,7 @@ class StartCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
+        SongbirdService.songbird.start_playing(int(value))
         self.value = int(value) #if this doesn't work, int(bytes(value))
 
 class StopCharacteristic(Characteristic):
@@ -130,6 +132,7 @@ class StopCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
+        SongbirdService.songbird.stop_playing()
         self.value = int(value) #if this doesn't work, int(bytes(value))
 
 class VolumeCharacteristic(Characteristic):
@@ -149,6 +152,7 @@ class VolumeCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
+        SongbirdService.songbird.adjust_volume(float(value))
         self.value = int(value) #if this doesn't work, int(bytes(value))
 
 class TempoCharacteristic(Characteristic):
@@ -168,6 +172,7 @@ class TempoCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
+        SongbirdService.songbird.adjust_tempo(int(tempo))
         self.value = int(value)
 
 class CharacteristicUserDescriptionDescriptor(Descriptor):
@@ -214,7 +219,7 @@ def register_ad_error_cb(error):
 
 AGENT_PATH = "/home/pi/songbird/ble"
 
-def main():
+def main(*args, **kwargs):
     global mainloop
 
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
@@ -270,9 +275,13 @@ def main():
 
     agent_manager.RequestDefaultAgent(AGENT_PATH)
 
+    songbird = mp.songbirdControl(*args, **kwargs)
+    SongbirdService.Songbird = songbird
+
     mainloop.run()
     # ad_manager.UnregisterAdvertisement(advertisement)
     # dbus.service.Object.remove_from_connection(advertisement)
+    
 
 
 if __name__ == "__main__":
