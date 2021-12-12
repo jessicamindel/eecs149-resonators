@@ -18,7 +18,7 @@ static int songbirdControl_init(PyObject *self, PyObject *args, PyObject *kwds) 
     //fill this with the structure init
     songbirdControl *new_songbird;
     new_songbird = malloc(sizeof(songbirdControl));
-    printf("%s", *args);
+    printf("%s", **args);
 
     printf("here1!\n");
     fflush(stdout);
