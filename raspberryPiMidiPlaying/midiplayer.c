@@ -107,7 +107,7 @@ static PyTypeObject midiplayerType = {
     .tp_repr = (reprfunc)songbirdControl_repr,
     .tp_flags = Py_TPFLAGS_DEFAULT |
         Py_TPFLAGS_BASETYPE,
-    .tp_doc = "songbirdControl objects",
+    .tp_doc = "midiplayer.songbirdControl objects",
     .tp_methods = songbirdControl_methods,
     .tp_init = (initproc)songbirdControl_init,
     .tp_new = songbirdControl_new
@@ -133,7 +133,7 @@ PyMODINIT_FUNC PyInit_midiplayer(void) {
         return NULL;
 
     Py_INCREF(&midiplayerType);
-    PyModule_AddObject(m, "Midi Player", (PyObject *)&midiplayerType);
+    PyModule_AddObject(m, "songbirdControl", (PyObject *)&midiplayerType);
     printf("Successful import of Midi Player!\n");
     fflush(stdout);
     return m;
