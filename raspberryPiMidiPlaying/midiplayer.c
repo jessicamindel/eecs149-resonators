@@ -11,6 +11,7 @@
 #include <Python.h>
 #include "midiplayer.h"
 
+static PyTypeObject midiplayerType;
 
 static int *songbirdControl_init_player(PyObject *self, char** arg) {
     //does preloading to minimize latency on start.
@@ -38,58 +39,85 @@ static int *songbirdControl_adjust_tempo(PyObject *self, int bpm) {
 }
 
 
-int main(int argc, char** argv) 
-{
-    int i;
-    fluid_settings_t* settings;
-    fluid_synth_t* synth;
-    fluid_player_t* player;
-    fluid_audio_driver_t* adriver;
-    settings = new_fluid_settings();
-    synth = new_fluid_synth(settings);
-    player = new_fluid_player(synth);
-    /* process command line arguments */
-    fluid_synth_sfload(synth, argv[0], 1);
-    //add in the midi player
-    fluid_player_add(player, argv[1]);
-    //add in the tick seek
-    fluid_player_seek(player, argv[2]);
-    //start the interrupt handler (so basically when we need to stop it)
-    fluid_player_set_tick_callback(player, interrupt_handler, player, settings, synth, adriver)
-    /* start the synthesizer thread */
-    adriver = new_fluid_audio_driver(settings, synth);
-    /* play the midi files, if any */
-    fluid_player_play(player);
-    /* wait for playback termination */
-    fluid_player_join(player);
-    /* cleanup */
-    delete_fluid_audio_driver(adriver);
-    delete_fluid_player(player);
-    delete_fluid_synth(synth);
-    delete_fluid_settings(settings);
+//this entire section is now solely for reference
+//
+// int main(int argc, char** argv) 
+// {
+//     int i;
+
+//     fluid_settings_t* settings;
+//     fluid_synth_t* synth;
+//     fluid_player_t* player;
+//     fluid_audio_driver_t* adriver;
+
+//     settings = new_fluid_settings();
+//     synth = new_fluid_synth(settings);
+//     player = new_fluid_player(synth);
+//     /* process command line arguments */
+//     fluid_synth_sfload(synth, argv[0], 1);
+//     //add in the midi player
+//     fluid_player_add(player, argv[1]);
+//     //add in the tick seek
+//     fluid_player_seek(player, argv[2]);
+//     //start the interrupt handler (so basically when we need to stop it)
+//     fluid_player_set_tick_callback(player, interrupt_handler, player, settings, synth, adriver)
+//     /* start the synthesizer thread */
+//     adriver = new_fluid_audio_driver(settings, synth);
+//     /* play the midi files, if any */
+//     fluid_player_play(player);
+//     /* wait for playback termination */
+//     fluid_player_join(player);
+//     /* cleanup */
+//     delete_fluid_audio_driver(adriver);
+//     delete_fluid_player(player);
+//     delete_fluid_synth(synth);
+//     delete_fluid_settings(settings);
+//     return 0;
+// }
+
+// //this function runs every single MIDI tick so it basically insta stops once the stop code is recieved
+// void interrupt_handler(fluid_player_t* player, fluid_settings_t* settings, fluid_synth_t* synth, fluid_audio_driver_t* adriver) {
+//     //TODO: find a way to send a signal over BLE/Wifi, once that's done, just run the code block below lol
+//     if(false) {
+//         fluid_player_stop(player)
+//         delete_fluid_audio_driver(adriver);
+//         delete_fluid_player(player);
+//         delete_fluid_synth(synth);
+//         delete_fluid_settings(settings);
+//     }
+//     //this one could handle drumstick imu inputs for volume control
+//     if(false) {
+//         fluid_synth_set_gain(synth, 0)
+//     }
+//     //this one could handle drumstick imu input for mod... i actually dunno what it does but maybe yall can figure it out
+//     if(false) {
+//         fluid_synth_add_mod(synth, mod, 0)
+//     }
+// }
+
+static int songbirdControl_init(PyObject *self, PyObject *args, PyObject *kwds) {
+    //fill this with the structure init
     return 0;
 }
 
-//this function runs every single MIDI tick so it basically insta stops once the stop code is recieved
-void interrupt_handler(fluid_player_t* player, fluid_settings_t* settings, fluid_synth_t* synth, fluid_audio_driver_t* adriver) {
-    //TODO: find a way to send a signal over BLE/Wifi, once that's done, just run the code block below lol
-    if(false) {
-        fluid_player_stop(player)
-        delete_fluid_audio_driver(adriver);
-        delete_fluid_player(player);
-        delete_fluid_synth(synth);
-        delete_fluid_settings(settings);
-    }
-    //this one could handle drumstick imu inputs for volume control
-    if(false) {
-        fluid_synth_set_gain(synth, 0)
-    }
-    //this one could handle drumstick imu input for mod... i actually dunno what it does but maybe yall can figure it out
-    if(false) {
-        fluid_synth_add_mod(synth, mod, 0)
-    }
+static void songbirdControl_dealloc(songbirdControl *self) {
+    //write deallocation code here
 }
 
+static PyObject *songbirdControl_repr(PyObject *self) {
+    //too lazy to implement actual repr
+    return NULL;
+}
+
+static PyObject *songbirdControl_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
+    /* size of allocated memory is tp_basicsize + nitems*tp_itemsize*/
+    songbirdControl *self = (songbirdControl *)type->tp_alloc(type, 0);
+    return (PyObject *)self;
+}
+
+static PyMethodDef songbirdControl_class_methods[] = {
+    {NULL, NULL, 0, NULL}
+};
 /*
  * for reference - Jet
  * Create an array of PyMethodDef structs to hold the instance methods.
@@ -97,7 +125,7 @@ void interrupt_handler(fluid_player_t* player, fluid_settings_t* settings, fluid
  * as "set"
  * You might find this link helpful: https://docs.python.org/3.6/c-api/structures.html
  */
-static PyMethodDef Matrix61c_methods[] = {
+static PyMethodDef songbirdControl_methods[] = {
     /* TODO: YOUR CODE HERE */
     {"init_player", (PyCFunction) songbirdControl_init_player, METH_VARARGS, NULL},
     {"start_playing", (PyCFunction) songbirdControl_start_playing, METH_VARARGS, NULL},
@@ -117,13 +145,11 @@ static PyTypeObject midiplayerType = {
     .tp_basicsize = sizeof(songbirdControl),
     .tp_dealloc = (destructor)songbirdControl_dealloc,
     .tp_repr = (reprfunc)songbirdControl_repr,
-    .tp_as_number = &songbirdControl_as_number,
     .tp_flags = Py_TPFLAGS_DEFAULT |
         Py_TPFLAGS_BASETYPE,
     .tp_doc = "songbirdControl objects",
     .tp_methods = songbirdControl_methods,
     .tp_members = songbirdControl_members,
-    .tp_as_mapping = &songbirdControl_mapping,
     .tp_init = (initproc)songbirdControl_init,
     .tp_new = songbirdControl_new
 };
