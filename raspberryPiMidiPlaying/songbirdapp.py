@@ -276,10 +276,8 @@ def main(*args, **kwargs):
     agent_manager.RequestDefaultAgent(AGENT_PATH)
 
     parser = argparse.ArgumentParser(description='Songbird parser')
-    parser.add_argument('soundfont', type=string,
-                    help='soundfont to use')
-    parser.add_argument('midifile', type=string,
-                    help='midi file to play')
+    parser.add_argument('soundfont', help='soundfont to use')
+    parser.add_argument('midifile', help='midi file to play')
 
     args = parser.parse_args()
 
