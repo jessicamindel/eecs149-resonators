@@ -18,15 +18,19 @@ static int songbirdControl_init(PyObject *self, PyObject *args, PyObject *kwds) 
     //fill this with the structure init
     songbirdControl *new_songbird;
     new_songbird = malloc(sizeof(songbirdControl));
-    printf("here1");
+
+    printf("here1!\n");
+    fflush(stdout);
 
     (*new_songbird).settings = new_fluid_settings();
     (*new_songbird).synth = new_fluid_synth((*new_songbird).settings);
     (*new_songbird).player = new_fluid_player((*new_songbird).synth);
 
+    printf("here2!\n");
+    fflush(stdout);
+
     PyObject *arg1 = NULL;
     PyObject *arg2 = NULL;
-    printf("here2");
 
     if (PyArg_UnpackTuple(args, "args", 1, 2, &arg1, &arg2)) {
         fluid_synth_sfload((*new_songbird).synth, PyByteArray_AsString(arg1), 1);
@@ -35,9 +39,7 @@ static int songbirdControl_init(PyObject *self, PyObject *args, PyObject *kwds) 
         PyErr_SetString(PyExc_TypeError, "Invalid arguments");
         return -1;
     }
-    printf("here3");
     (*new_songbird).adriver = new_fluid_audio_driver((*new_songbird).settings, (*new_songbird).synth);
-    printf("here4");
     return 0;
 }
 
@@ -127,15 +129,14 @@ static struct PyModuleDef midiplayermodule = {
 /* Initialize the midiplayer module */
 PyMODINIT_FUNC PyInit_midiplayer(void) {
     PyObject* m;
-
     if (PyType_Ready(&midiplayerType) < 0)
         return NULL;
 
     m = PyModule_Create(&midiplayermodule);
     if (m == NULL)
         return NULL;
-
     Py_INCREF(&midiplayerType);
+
     PyModule_AddObject(m, "songbirdControl", (PyObject *)&midiplayerType);
     printf("Successful import of Midi Player!\n");
     fflush(stdout);

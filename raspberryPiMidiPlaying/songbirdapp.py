@@ -274,8 +274,9 @@ def main(*args, **kwargs):
     )
 
     agent_manager.RequestDefaultAgent(AGENT_PATH)
-
+    print("here1")
     songbird = mp.songbirdControl(*args, **kwargs)
+    print("here2")
     SongbirdService.Songbird = songbird
 
     mainloop.run()
