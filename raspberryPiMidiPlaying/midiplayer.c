@@ -25,7 +25,7 @@ static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *m
 
     
     PyObject *esf = PyUnicode_AsEncodedString(soundfont, "UTF-8", "strict");
-    if(esf) {
+    if(soundfont) {
         printf("noerrhere!\n");
         fflush(stdout);
     } else {
