@@ -112,11 +112,11 @@ class StartCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
-        print("write to start detected with value" + str(int(bytes(value))))
+        print("write to start detected with value " + str(int(bytes(value))))
         try:
             SongbirdService.songbird.start_playing(int(bytes(value)))
         except:
-            print("unable to play songbird")
+            print("Unable to start Songbird!")
         self.value = int(bytes(value))
 
 class StopCharacteristic(Characteristic):
@@ -136,8 +136,10 @@ class StopCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
-        print("write to stop detected with value")
-        SongbirdService.songbird.stop_playing()
+        try:
+            SongbirdService.songbird.stop_playing()
+        except:
+            print("Unable to stop Songbird!")
         self.value = int(bytes(value))
 
 class VolumeCharacteristic(Characteristic):
@@ -157,8 +159,10 @@ class VolumeCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
-        print("write to vol detected with value")
-        SongbirdService.songbird.adjust_volume(float(value))
+        try:
+            SongbirdService.songbird.adjust_volume(float(bytes(value)))
+        except:
+            print("Unable to adjust volume on Songbird!")
         self.value = int(bytes(value))
 
 class TempoCharacteristic(Characteristic):
@@ -178,8 +182,10 @@ class TempoCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
-        print("write to tempo detected with value")
-        SongbirdService.songbird.adjust_tempo(int(tempo))
+        try:
+            SongbirdService.songbird.adjust_tempo(int(bytes(tempo)))
+        except:
+            print("Unable to adjust tempo on Songbird!")
         self.value = int(bytes(value))
 
 class CharacteristicUserDescriptionDescriptor(Descriptor):

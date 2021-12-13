@@ -10,6 +10,7 @@
 #include <fluidsynth.h>
 #include <stdio.h>
 #include <Python.h>
+#include <structmember.h>
 #include "midiplayer.h"
 
 static PyTypeObject midiplayerType;
@@ -78,8 +79,7 @@ static int *songbirdControl_adjust_tempo(PyObject *self, PyObject *pyBPM) {
 static void songbirdControl_dealloc(songbirdControl *self) {
     printf("Deallocating songbird.\n");
     fflush(stdout);
-    //free(self);
-    //Py_TYPE(self)->tp_free(self);
+    Py_TYPE(self)->tp_free(self);
 }
 
 static PyObject *songbirdControl_repr(PyObject *self) {
@@ -89,17 +89,9 @@ static PyObject *songbirdControl_repr(PyObject *self) {
 
 static PyObject *songbirdControl_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
     /* size of allocated memory is tp_basicsize + nitems*tp_itemsize*/
-    printf("beginning cast.\n");
-    fflush(stdout);
     songbirdControl *self = (songbirdControl *)type->tp_alloc(type, 0);
-    printf("ending cast.\n");
-    fflush(stdout);
     return (PyObject *)self;
 }
-
-static PyMethodDef songbirdControl_class_methods[] = {
-    {NULL, NULL, 0, NULL}
-};
 
 static PyMethodDef songbirdControl_methods[] = {
     /* TODO: YOUR CODE HERE */
@@ -114,6 +106,7 @@ static PyTypeObject midiplayerType = {
     PyVarObject_HEAD_INIT(NULL, 0)
     .tp_name = "midiplayer.songbirdControl",
     .tp_basicsize = sizeof(songbirdControl),
+    .tp_itemsize = 0,
     .tp_dealloc = (destructor)songbirdControl_dealloc,
     .tp_repr = (reprfunc)songbirdControl_repr,
     .tp_flags = Py_TPFLAGS_DEFAULT |
@@ -129,7 +122,6 @@ static struct PyModuleDef midiplayermodule = {
     "midiplayer",
     "Midiplayer operations",
     -1,
-    songbirdControl_class_methods
 };
 
 /* Initialize the midiplayer module */
@@ -143,7 +135,11 @@ PyMODINIT_FUNC PyInit_midiplayer(void) {
         return NULL;
     Py_INCREF(&midiplayerType);
 
-    PyModule_AddObject(m, "songbirdControl", (PyObject *)&midiplayerType);
+    if (PyModule_AddObject(m, "songbirdControl", (PyObject *)&midiplayerType) < 0) {
+        Py_DECREF(&midiplayerType);
+        Py_DECREF(m);
+        return NULL;
+    }
     printf("Successful import of Midi Player!\n");
     fflush(stdout);
     return m;
