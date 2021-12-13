@@ -24,7 +24,7 @@ static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *m
     (*new_songbird).player = new_fluid_player((*new_songbird).synth);
 
     
-    PyObject *esf = PyUnicode_AsEncodedString(soundfont, "UTF-8", "strict");
+    PyObject *esf = PyBytes_FromString(soundfont)
     if(PyUnicode_AsEncodedString(soundfont, "UTF-8", "strict")) {
         printf("noerrhere!\n");
         fflush(stdout);
@@ -33,7 +33,7 @@ static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *m
         fflush(stdout);
     }
     if(PyBytes_FromString(soundfont)) {
-        printf("noerrhere!\n");
+        printf("%s\n",esf);
         fflush(stdout);
     } else {
         printf("errhere!\n");
