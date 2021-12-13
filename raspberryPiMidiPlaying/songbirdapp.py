@@ -284,6 +284,7 @@ def main(*args, **kwargs):
     print(args.soundfont)
 
     songbird = mp.songbirdControl(args.soundfont, args.midifile)
+    print("init successful?")
     SongbirdService.Songbird = songbird
 
     mainloop.run()
