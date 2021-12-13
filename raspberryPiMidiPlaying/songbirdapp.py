@@ -92,8 +92,8 @@ class SongbirdService(Service):
         Service.__init__(self, bus, index, self.SONGBIRD_SVC_UUID, True)
         self.add_characteristic(StartCharacteristic(bus, 0, self))
         self.add_characteristic(StopCharacteristic(bus, 1, self))
-        self.add_characteristic(VolumeCharacteristic(bus, 2, self))
-        self.add_characteristic(TempoCharacteristic(bus, 3, self))
+        #self.add_characteristic(VolumeCharacteristic(bus, 2, self))
+        #self.add_characteristic(TempoCharacteristic(bus, 3, self))
 
 class StartCharacteristic(Characteristic):
     uuid = "10f4c060-fdd1-49a5-898e-ab924709a558"
