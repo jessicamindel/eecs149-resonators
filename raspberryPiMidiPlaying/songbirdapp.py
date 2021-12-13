@@ -89,10 +89,10 @@ class SongbirdService(Service):
     def __init__(self, bus, index):
         #songbird = mp.songbirdControl()
         Service.__init__(self, bus, index, self.SONGBIRD_SVC_UUID, True)
-        self.add_characteristic(StartCharacteristic(bus, 2, self))
-        self.add_characteristic(StopCharacteristic(bus, 3, self))
-        self.add_characteristic(VolumeCharacteristic(bus, 0, self))
+        self.add_characteristic(VolumeCharacteristic(bus, 2, self))
         self.add_characteristic(TempoCharacteristic(bus, 1, self))
+        self.add_characteristic(StartCharacteristic(bus, 0, self))
+        self.add_characteristic(StopCharacteristic(bus, 3, self))
 
 class StartCharacteristic(Characteristic):
     uuid = "10f4c060-fdd1-49a5-898e-ab924709a558"
@@ -132,7 +132,7 @@ class StopCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
-        print("write to start detected with value")
+        print("write to stop detected with value")
         SongbirdService.songbird.stop_playing()
         self.value = int(value) #if this doesn't work, int(bytes(value))
 
@@ -253,7 +253,7 @@ def main(*args, **kwargs):
     agent = Agent(bus, AGENT_PATH)
 
     app = Application(bus)
-    app.add_service(SongbirdService(bus, 4))
+    app.add_service(SongbirdService(bus, 2))
 
     mainloop = MainLoop()
 
