@@ -7,7 +7,6 @@ import dbus.exceptions
 import dbus.mainloop.glib
 import dbus.service
 import midiplayer as mp
-import argparse
 
 from ble import (
     Advertisement,
@@ -154,6 +153,7 @@ class VolumeCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
+        print("write to vol detected with value")
         SongbirdService.songbird.adjust_volume(float(value))
         self.value = int(value) #if this doesn't work, int(bytes(value))
 
@@ -174,6 +174,7 @@ class TempoCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
+        print("write to tempo detected with value")
         SongbirdService.songbird.adjust_tempo(int(tempo))
         self.value = int(value)
 
