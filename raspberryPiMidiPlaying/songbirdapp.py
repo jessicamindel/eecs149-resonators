@@ -111,8 +111,8 @@ class StartCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
-        print("write to start detected with value" + int(value))
-        SongbirdService.songbird.start_playing(int(value))
+        print("write to start detected with value" + str(int(value)))
+        SongbirdService.songbird.start_playing(int(bytes(value)))
         self.value = int(value) #if this doesn't work, int(bytes(value))
 
 class StopCharacteristic(Characteristic):
