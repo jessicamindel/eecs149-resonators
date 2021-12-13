@@ -38,10 +38,10 @@ static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *m
 
 static int *songbirdControl_start_playing(PyObject *self, PyObject *pyTick) {
     //starts it (uses fluid_player_seek, and then fluid_player_play)
-    int tick = PyLong_AsLong(pyTick);
+    int tick = PyLong_AsLong(*pyTick);
     printf("Now starting play at tick %i.\n", tick);
     fflush(stdout);
-    fluid_player_seek(((songbirdControl *)self)->player, 0);
+    fluid_player_seek(((songbirdControl *)self)->player, tick);
     fluid_player_play(((songbirdControl *)self)->player);
     return 0;
 }
