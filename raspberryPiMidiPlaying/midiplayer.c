@@ -46,14 +46,9 @@ static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *m
         printf("errhere!\n");
         fflush(stdout);
     }
-    char* csoundfont = PyBytes_AsString(esf);
-    PyObject *emf = PyUnicode_AsEncodedString(midifile, "UTF-8", "strict");
-    char* cmidifile = PyBytes_AsString(emf);
-    printf("%s\n", csoundfont);
-    fflush(stdout);
 
-    fluid_synth_sfload((*new_songbird).synth, csoundfont, 1);
-    fluid_player_add((*new_songbird).player, cmidifile);
+    fluid_synth_sfload((*new_songbird).synth, "sftarget.sf2", 1);
+    fluid_player_add((*new_songbird).player, "miditarget.mid");
 
     printf("here4!\n");
     fflush(stdout);
