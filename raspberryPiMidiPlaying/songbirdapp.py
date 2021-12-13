@@ -87,7 +87,7 @@ class SongbirdService(Service):
     SONGBIRD_SVC_UUID = "314b2cb7-d379-474f-832f-6f833657e7e2"
 
     def __init__(self, bus, index):
-        #songbird = mp.songbirdControl()
+        songbird = mp.songbirdControl()
         Service.__init__(self, bus, index, self.SONGBIRD_SVC_UUID, True)
         self.add_characteristic(VolumeCharacteristic(bus, 0, self))
         self.add_characteristic(TempoCharacteristic(bus, 1, self))
@@ -111,7 +111,7 @@ class StartCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
-        print("write to start detected with value")
+        print("write to start detected with value" + int(value))
         SongbirdService.songbird.start_playing(int(value))
         self.value = int(value) #if this doesn't work, int(bytes(value))
 
