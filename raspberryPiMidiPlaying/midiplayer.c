@@ -32,14 +32,14 @@ static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *m
         printf("errhere!\n");
         fflush(stdout);
     }
-    if(PyBytes_FromString(soundfont, "UTF-8", "strict")) {
+    if(PyBytes_FromString(soundfont)) {
         printf("noerrhere!\n");
         fflush(stdout);
     } else {
         printf("errhere!\n");
         fflush(stdout);
     }
-    if(PyBytes_AsString(soundfont, "UTF-8", "strict")) {
+    if(PyBytes_AsString(soundfont)) {
         printf("noerrhere!\n");
         fflush(stdout);
     } else {
