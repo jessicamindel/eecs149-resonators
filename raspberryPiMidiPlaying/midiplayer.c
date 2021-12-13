@@ -22,7 +22,7 @@ static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *m
     (*new_songbird).settings = new_fluid_settings();
     (*new_songbird).synth = new_fluid_synth((*new_songbird).settings);
     (*new_songbird).player = new_fluid_player((*new_songbird).synth);
-    fluid_settings_setstr((*new_songbird).settings, "audio.driver", "alsa")
+    fluid_settings_setstr((*new_songbird).settings, "audio.driver", "alsa");
 
     
     PyObject *esf = PyBytes_FromString(soundfont);
