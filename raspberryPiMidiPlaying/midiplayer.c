@@ -78,8 +78,8 @@ static int *songbirdControl_adjust_tempo(PyObject *self, PyObject *pyBPM) {
 static void songbirdControl_dealloc(songbirdControl *self) {
     printf("Deallocating songbird.\n");
     fflush(stdout);
-    free(self);
-    Py_TYPE(self)->tp_free(self);
+    //free(self);
+    //Py_TYPE(self)->tp_free(self);
 }
 
 static PyObject *songbirdControl_repr(PyObject *self) {
