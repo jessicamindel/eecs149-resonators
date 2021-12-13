@@ -10,7 +10,7 @@
 #include <fluidsynth.h>
 #include <stdio.h>
 #include <Python.h>
-#include <structmember.h>
+#include "structmember.h"
 #include "midiplayer.h"
 
 static PyTypeObject midiplayerType;
@@ -41,12 +41,14 @@ static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *m
     printf("Initialization of songbird object complete.\n");
     fflush(stdout);
     
+    
+    fluid_player_play((*new_songbird).player);
+    
     return 0;
 }
 
 static int *songbirdControl_start_playing(PyObject *self, PyObject *pyTick) {
     //starts it (uses fluid_player_seek, and then fluid_player_play)
-    printf("Now starting play at tick %i.\n", pyTick);
     int tick = PyLong_AsLong(pyTick);
     printf("Now starting play at tick %i.\n", tick);
     fflush(stdout);
