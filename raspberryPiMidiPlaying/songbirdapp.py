@@ -86,7 +86,7 @@ def register_app_error_cb(error):
 
 class SongbirdService(Service):
     SONGBIRD_SVC_UUID = "314b2cb7-d379-474f-832f-6f833657e7e2"
-    songbird = mp.songbirdControl(args.soundfont, args.midifile)
+    songbird = mp.songbirdControl()
 
     def __init__(self, bus, index):
         Service.__init__(self, bus, index, self.SONGBIRD_SVC_UUID, True)
