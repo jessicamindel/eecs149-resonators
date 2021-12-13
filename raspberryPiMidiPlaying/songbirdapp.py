@@ -88,8 +88,7 @@ class SongbirdService(Service):
     SONGBIRD_SVC_UUID = "314b2cb7-d379-474f-832f-6f833657e7e2"
 
     def __init__(self, bus, index):
-        songbird = mp.songbirdControl()
-        print("so does it make it here???")
+        #songbird = mp.songbirdControl()
         Service.__init__(self, bus, index, self.SONGBIRD_SVC_UUID, True)
         self.add_characteristic(StartCharacteristic(bus, 0, self))
         self.add_characteristic(StopCharacteristic(bus, 1, self))
