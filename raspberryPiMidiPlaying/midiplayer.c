@@ -29,13 +29,16 @@ static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *m
     fluid_player_add((*new_songbird).player, "miditarget.mid");
 
     (*new_songbird).adriver = new_fluid_audio_driver((*new_songbird).settings, (*new_songbird).synth);
-
+    printf("Initialization of songbird object complete.\n");
+    fflush(stdout);
     return 0;
 }
 
 static int *songbirdControl_start_playing(PyObject *self, PyObject *pyTick) {
     //starts it (uses fluid_player_seek, and then fluid_player_play)
     int tick = PyLong_AsLong(pyTick);
+    printf("Now starting play.\n");
+    fflush(stdout);
     fluid_player_seek(((songbirdControl *)self)->player, tick);
     fluid_player_play(((songbirdControl *)self)->player);
     return 0;
@@ -43,6 +46,8 @@ static int *songbirdControl_start_playing(PyObject *self, PyObject *pyTick) {
 
 static int *songbirdControl_stop_playing(PyObject *self) {
     //stops it (uses fluid_player_stop, and associated cleanups)
+    printf("Now attempting to stop play.\n");
+    fflush(stdout);
     fluid_player_stop(((songbirdControl *)self)->player);
     delete_fluid_audio_driver(((songbirdControl *)self)->adriver);
     delete_fluid_player(((songbirdControl *)self)->player);
@@ -53,6 +58,8 @@ static int *songbirdControl_stop_playing(PyObject *self) {
 
 static int *songbirdControl_adjust_volume(PyObject *self, PyObject *pyVol) {
     //increase or decrease volume based on input (uses fluid_synth_set_gain)
+    printf("Adjusting volume of songbird.\n");
+    fflush(stdout);
     float vol = PyFloat_AsDouble(pyVol);
     fluid_synth_set_gain(((songbirdControl *)self)->synth, vol);
     return 0;
@@ -60,15 +67,18 @@ static int *songbirdControl_adjust_volume(PyObject *self, PyObject *pyVol) {
 
 static int *songbirdControl_adjust_tempo(PyObject *self, PyObject *pyBPM) {
     //increase or decrease tempo based on input (uses fluidsynth_set_bpm)
+    printf("Adjusting tempo of songbird.\n");
+    fflush(stdout);
     int bpm = PyLong_AsLong(pyBPM);
     fluid_player_set_bpm(((songbirdControl *)self)->player, bpm);
     return 0;
 }
 
 static void songbirdControl_dealloc(songbirdControl *self) {
-    //what hypothetically happens if we don't free
-    //free(self);
-    //Py_TYPE(self)->tp_free(self);
+    printf("Deallocating songbird.\n");
+    fflush(stdout);
+    free(self);
+    Py_TYPE(self)->tp_free(self);
 }
 
 static PyObject *songbirdControl_repr(PyObject *self) {
