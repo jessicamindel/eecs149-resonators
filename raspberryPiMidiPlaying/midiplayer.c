@@ -30,8 +30,6 @@ static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *m
 
     (*new_songbird).adriver = new_fluid_audio_driver((*new_songbird).settings, (*new_songbird).synth);
 
-    printf("init???");
-    fflush(stdout);
     return 0;
 }
 

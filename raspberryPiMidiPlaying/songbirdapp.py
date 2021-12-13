@@ -86,7 +86,7 @@ def register_app_error_cb(error):
 
 class SongbirdService(Service):
     SONGBIRD_SVC_UUID = "314b2cb7-d379-474f-832f-6f833657e7e2"
-    songbird = None
+    songbird = mp.songbirdControl(args.soundfont, args.midifile)
 
     def __init__(self, bus, index):
         Service.__init__(self, bus, index, self.SONGBIRD_SVC_UUID, True)
@@ -274,18 +274,6 @@ def main(*args, **kwargs):
     )
 
     agent_manager.RequestDefaultAgent(AGENT_PATH)
-
-    parser = argparse.ArgumentParser(description='Songbird parser')
-    parser.add_argument('soundfont', help='soundfont to use')
-    parser.add_argument('midifile', help='midi file to play')
-
-    args = parser.parse_args()
-
-    print(args.soundfont)
-
-    songbird = mp.songbirdControl(args.soundfont, args.midifile)
-    print("init successful?")
-    SongbirdService.Songbird = songbird
 
     mainloop.run()
     # ad_manager.UnregisterAdvertisement(advertisement)
