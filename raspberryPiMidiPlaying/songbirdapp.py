@@ -112,6 +112,8 @@ class StartCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
+        printf("write to start detected with int %i", int(value));
+        fflush(stdout);
         SongbirdService.songbird.start_playing(int(value))
         self.value = int(value) #if this doesn't work, int(bytes(value))
 
@@ -132,6 +134,8 @@ class StopCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
+        printf("write to stop detected");
+        fflush(stdout);
         SongbirdService.songbird.stop_playing()
         self.value = int(value) #if this doesn't work, int(bytes(value))
 
