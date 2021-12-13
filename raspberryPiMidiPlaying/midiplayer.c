@@ -24,34 +24,14 @@ static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *m
     (*new_songbird).player = new_fluid_player((*new_songbird).synth);
     fluid_settings_setstr((*new_songbird).settings, "audio.driver", "alsa");
 
-    
-    PyObject *esf = PyBytes_FromString(soundfont);
-    if(PyUnicode_AsEncodedString(soundfont, "UTF-8", "strict")) {
-        printf("noerrhere!\n");
-        fflush(stdout);
-    } else {
-        printf("errhere!\n");
-        fflush(stdout);
-    }
-    if(PyBytes_FromString(soundfont)) {
-        printf("%s\n",esf);
-        fflush(stdout);
-    } else {
-        printf("errhere!\n");
-        fflush(stdout);
-    }
-    if(PyBytes_AsString(soundfont)) {
-        printf("noerrhere!\n");
-        fflush(stdout);
-    } else {
-        printf("errhere!\n");
-        fflush(stdout);
-    }
 
     fluid_synth_sfload((*new_songbird).synth, "sftarget.sf2", 1);
     fluid_player_add((*new_songbird).player, "miditarget.mid");
 
     (*new_songbird).adriver = new_fluid_audio_driver((*new_songbird).settings, (*new_songbird).synth);
+
+    printf("init???");
+    fflush(stdout);
     return 0;
 }
 
