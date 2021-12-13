@@ -43,6 +43,10 @@ static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *m
     
     
     fluid_player_play((*new_songbird).player);
+    fluid_player_join((*new_songbird).player);
+
+    printf("Done playing.\n");
+    fflush(stdout);
     
     return 0;
 }
