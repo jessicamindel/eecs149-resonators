@@ -31,6 +31,7 @@ static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *m
     (*new_songbird).adriver = new_fluid_audio_driver((*new_songbird).settings, (*new_songbird).synth);
     printf("Initialization of songbird object complete.\n");
     fflush(stdout);
+    
     return 0;
 }
 
@@ -88,6 +89,8 @@ static PyObject *songbirdControl_repr(PyObject *self) {
 
 static PyObject *songbirdControl_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
     /* size of allocated memory is tp_basicsize + nitems*tp_itemsize*/
+    printf("???????????????.\n");
+    fflush(stdout);
     songbirdControl *self = (songbirdControl *)type->tp_alloc(type, 0);
     return (PyObject *)self;
 }
