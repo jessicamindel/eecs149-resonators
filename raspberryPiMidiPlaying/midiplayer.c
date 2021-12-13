@@ -89,9 +89,11 @@ static PyObject *songbirdControl_repr(PyObject *self) {
 
 static PyObject *songbirdControl_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
     /* size of allocated memory is tp_basicsize + nitems*tp_itemsize*/
-    printf("???????????????.\n");
+    printf("beginning cast.\n");
     fflush(stdout);
     songbirdControl *self = (songbirdControl *)type->tp_alloc(type, 0);
+    printf("ending cast.\n");
+    fflush(stdout);
     return (PyObject *)self;
 }
 
