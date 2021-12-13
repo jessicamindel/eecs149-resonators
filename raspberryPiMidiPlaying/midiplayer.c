@@ -66,8 +66,9 @@ static int *songbirdControl_adjust_tempo(PyObject *self, PyObject *pyBPM) {
 }
 
 static void songbirdControl_dealloc(songbirdControl *self) {
-    free(self);
-    Py_TYPE(self)->tp_free(self);
+    //what hypothetically happens if we don't free
+    //free(self);
+    //Py_TYPE(self)->tp_free(self);
 }
 
 static PyObject *songbirdControl_repr(PyObject *self) {
