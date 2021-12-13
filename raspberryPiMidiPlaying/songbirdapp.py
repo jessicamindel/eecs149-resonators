@@ -85,6 +85,7 @@ def register_app_error_cb(error):
 
 class SongbirdService(Service):
     SONGBIRD_SVC_UUID = "314b2cb7-d379-474f-832f-6f833657e7e2"
+    songbird = None
 
     def __init__(self, bus, index):
         songbird = mp.songbirdControl()
@@ -112,8 +113,11 @@ class StartCharacteristic(Characteristic):
 
     def WriteValue(self, value, options):
         print("write to start detected with value" + str(int(bytes(value))))
-        SongbirdService.songbird.start_playing(int(bytes(value)))
-        self.value = int(value) #if this doesn't work, int(bytes(value))
+        try:
+            SongbirdService.songbird.start_playing(int(bytes(value)))
+        except:
+            print("unable to play songbird")
+        self.value = int(bytes(value))
 
 class StopCharacteristic(Characteristic):
     uuid = "10f4c060-fdd1-49a5-898e-bb924709a558"
@@ -134,7 +138,7 @@ class StopCharacteristic(Characteristic):
     def WriteValue(self, value, options):
         print("write to stop detected with value")
         SongbirdService.songbird.stop_playing()
-        self.value = int(value) #if this doesn't work, int(bytes(value))
+        self.value = int(bytes(value))
 
 class VolumeCharacteristic(Characteristic):
     uuid = "10f4c060-fdd1-49a5-898e-db924709a558"
@@ -155,7 +159,7 @@ class VolumeCharacteristic(Characteristic):
     def WriteValue(self, value, options):
         print("write to vol detected with value")
         SongbirdService.songbird.adjust_volume(float(value))
-        self.value = int(value) #if this doesn't work, int(bytes(value))
+        self.value = int(bytes(value))
 
 class TempoCharacteristic(Characteristic):
     uuid = "10f4c060-fdd1-49a5-898e-eb924709a558"
@@ -176,7 +180,7 @@ class TempoCharacteristic(Characteristic):
     def WriteValue(self, value, options):
         print("write to tempo detected with value")
         SongbirdService.songbird.adjust_tempo(int(tempo))
-        self.value = int(value)
+        self.value = int(bytes(value))
 
 class CharacteristicUserDescriptionDescriptor(Descriptor):
     """
