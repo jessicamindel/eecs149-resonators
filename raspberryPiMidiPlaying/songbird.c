@@ -72,7 +72,7 @@ static int Songbird_adjust_volume(Songbird *self, PyObject *pyVol) {
 }
 
 static int Songbird_adjust_tempo(Songbird *self, PyObject *pyBpm) {
-    fluid_player_set_bpm(self->synth, PyLong_AsLong(pyBpm));
+    fluid_player_set_bpm(self->player, PyLong_AsLong(pyBpm));
     return 0;
 }
 
