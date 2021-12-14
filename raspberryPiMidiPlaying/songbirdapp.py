@@ -6,7 +6,7 @@ import dbus
 import dbus.exceptions
 import dbus.mainloop.glib
 import dbus.service
-import midiplayer as mp
+import songbird as sgb
 
 from ble import (
     Advertisement,
@@ -46,7 +46,6 @@ logger.addHandler(logHandler)
 
 
 SongbirdBaseUrl = "XXXXXXXXXXXX"
-global songbird
 
 mainloop = None
 
@@ -89,7 +88,7 @@ class SongbirdService(Service):
     songbird = None
 
     def __init__(self, bus, index):
-        songbird = mp.songbirdControl()
+        songbird = sgb.Songbird()
         print("hi")
         songbird.start_playing(bytes(0))
         print("hi2")
