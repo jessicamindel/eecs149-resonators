@@ -61,22 +61,18 @@ static PyMemberDef Songbird_members[] = {
 static void *Songbird_start_playing(Songbird *self, PyObject *pyTick,PyObject *Py_UNUSED(ignored)) {
     fluid_player_seek(self->player, PyLong_AsLong(pyTick));
     fluid_player_play(self->player);
-    return 0;
 }
 
 static void *Songbird_stop_playing(Songbird *self,PyObject *Py_UNUSED(ignored)) {
     fluid_player_stop(self->player);
-    return 0;
 }
 
 static void *Songbird_adjust_volume(Songbird *self, PyObject *pyVol,PyObject *Py_UNUSED(ignored)) {
     fluid_synth_set_gain(self->synth, PyFloat_AsDouble(pyVol));
-    return 0;
 }
 
 static void *Songbird_adjust_tempo(Songbird *self, PyObject *pyBpm,PyObject *Py_UNUSED(ignored)) {
     fluid_player_set_bpm(self->player, PyLong_AsLong(pyBpm));
-    return 0;
 }
 
 static PyMethodDef Songbird_methods[] = {
