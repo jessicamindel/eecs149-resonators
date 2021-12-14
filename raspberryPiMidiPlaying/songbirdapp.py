@@ -46,6 +46,7 @@ logger.addHandler(logHandler)
 
 
 SongbirdBaseUrl = "XXXXXXXXXXXX"
+global songbird
 
 mainloop = None
 
@@ -89,17 +90,11 @@ class SongbirdService(Service):
 
     def __init__(self, bus, index):
         songbird = mp.songbirdControl()
-        print("here0")
         Service.__init__(self, bus, index, self.SONGBIRD_SVC_UUID, True)
-        print("here1")
         self.add_characteristic(VolumeCharacteristic(bus, 0, self))
-        print("here2")
         self.add_characteristic(TempoCharacteristic(bus, 1, self))
-        print("here3")
         self.add_characteristic(StartCharacteristic(bus, 2, self))
-        print("here4")
         self.add_characteristic(StopCharacteristic(bus, 3, self))
-        print("here5")
         
 
 class StartCharacteristic(Characteristic):
