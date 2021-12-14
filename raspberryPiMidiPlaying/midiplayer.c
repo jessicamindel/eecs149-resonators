@@ -135,6 +135,7 @@ static struct PyModuleDef midiplayermodule = {
     .m_name = "midiplayer",
     .m_doc = "Midiplayer operations",
     .m_size = -1,
+    songbirdControl_methods
 };
 
 /* Initialize the midiplayer module */
