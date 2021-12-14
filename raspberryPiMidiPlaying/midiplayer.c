@@ -33,16 +33,16 @@ static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *m
     fluid_settings_setstr((*new_songbird).settings, "audio.driver", "alsa");
     (*new_songbird).adriver = new_fluid_audio_driver((*new_songbird).settings, (*new_songbird).synth);
 
-    if(fluid_synth_sfload((*new_songbird).synth, "sftarget.sf2", 1) < 0){
-        printf("Soundfont failed to load.\n");
-        fflush(stdout);
-        return -1;
-    }
-    if(fluid_player_add((*new_songbird).player, "miditarget.mid") < 0) {
-        printf("MIDI file failed to load.\n");
-        fflush(stdout);
-        return -1;
-    }
+    // if(fluid_synth_sfload((*new_songbird).synth, "sftarget.sf2", 1) < 0){
+    //     printf("Soundfont failed to load.\n");
+    //     fflush(stdout);
+    //     return -1;
+    // }
+    // if(fluid_player_add((*new_songbird).player, "miditarget.mid") < 0) {
+    //     printf("MIDI file failed to load.\n");
+    //     fflush(stdout);
+    //     return -1;
+    // }
 
     printf("Initialization of songbird object complete.\n");
     fflush(stdout);
