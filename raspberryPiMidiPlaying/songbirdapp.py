@@ -90,6 +90,9 @@ class SongbirdService(Service):
 
     def __init__(self, bus, index):
         songbird = mp.songbirdControl()
+        print("hi")
+        songbird.start_playing(bytes(0))
+        print("hi2")
         Service.__init__(self, bus, index, self.SONGBIRD_SVC_UUID, True)
         self.add_characteristic(VolumeCharacteristic(bus, 0, self))
         self.add_characteristic(TempoCharacteristic(bus, 1, self))
@@ -116,7 +119,7 @@ class StartCharacteristic(Characteristic):
     def WriteValue(self, value, options):
         print("write to start detected with value " + str(int(bytes(value))))
         try:
-            SongbirdService.songbird.start_playing(int(bytes(value)))
+            songbird.start_playing(int(bytes(value)))
         except:
             print("Unable to start Songbird!")
         self.value = int(bytes(value))

@@ -103,9 +103,6 @@ static PyObject *songbirdControl_repr(PyObject *self) {
 static PyObject *songbirdControl_new(PyTypeObject *type, PyObject *args, PyObject *kwds) {
     /* size of allocated memory is tp_basicsize + nitems*tp_itemsize*/
     songbirdControl *self = (songbirdControl *)type->tp_alloc(type, 0);
-    fluid_player_stop(self->player);
-    printf("Successfully stopped songbird object.\n");
-    fflush(stdout);
     return (PyObject *)self;
 }
 
