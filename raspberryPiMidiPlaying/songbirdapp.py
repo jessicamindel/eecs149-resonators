@@ -88,10 +88,8 @@ class SongbirdService(Service):
     SONGBIRD_SVC_UUID = "314b2cb7-d379-474f-832f-6f833657e7e2"
 
     def __init__(self, bus, index):
-        songbird = sgb.Songbird()
-        print("hi")
-        songbird.start(0)
-        print("hi2")
+        SongbirdService.songbird = sgb.Songbird()
+        SongbirdService.songbird.start(int(0))
         Service.__init__(self, bus, index, self.SONGBIRD_SVC_UUID, True)
         self.add_characteristic(VolumeCharacteristic(bus, 0, self))
         self.add_characteristic(TempoCharacteristic(bus, 1, self))
@@ -141,7 +139,7 @@ class StopCharacteristic(Characteristic):
 
     def WriteValue(self, value, options):
         try:
-            SongbirdService.songbird.stop_playing()
+            SongbirdService.songbird.stop()
         except:
             print("Unable to stop Songbird!")
         self.value = int(bytes(value))
@@ -187,7 +185,7 @@ class TempoCharacteristic(Characteristic):
 
     def WriteValue(self, value, options):
         try:
-            SongbirdService.songbird.adjust_tempo(int(bytes(tempo)))
+            SongbirdService.songbird.bpm(int(bytes(tempo)))
         except:
             print("Unable to adjust tempo on Songbird!")
         self.value = int(bytes(value))
