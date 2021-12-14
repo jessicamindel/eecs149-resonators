@@ -1,5 +1,6 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
+#include <stdio.h>
 #include <fluidsynth.h>
 #include <structmember.h>
 
@@ -55,23 +56,23 @@ static PyMemberDef Songbird_members[] = {
     {NULL}  /* Sentinel */
 };
 
-static int Songbird_start_playing(Songbird *self, PyObject *pyTick) {
+static void *Songbird_start_playing(Songbird *self, PyObject *pyTick) {
     fluid_player_seek(self->player, PyLong_AsLong(pyTick));
     fluid_player_play(self->player);
     return 0;
 }
 
-static int Songbird_stop_playing(Songbird *self) {
+static void *Songbird_stop_playing(Songbird *self) {
     fluid_player_stop(self->player);
     return 0;
 }
 
-static int Songbird_adjust_volume(Songbird *self, PyObject *pyVol) {
+static void *Songbird_adjust_volume(Songbird *self, PyObject *pyVol) {
     fluid_synth_set_gain(self->synth, PyFloat_AsDouble(pyVol));
     return 0;
 }
 
-static int Songbird_adjust_tempo(Songbird *self, PyObject *pyBpm) {
+static void *Songbird_adjust_tempo(Songbird *self, PyObject *pyBpm) {
     fluid_player_set_bpm(self->player, PyLong_AsLong(pyBpm));
     return 0;
 }

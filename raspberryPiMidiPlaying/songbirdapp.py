@@ -6,6 +6,7 @@ import dbus
 import dbus.exceptions
 import dbus.mainloop.glib
 import dbus.service
+
 import songbird as sgb
 
 from ble import (
