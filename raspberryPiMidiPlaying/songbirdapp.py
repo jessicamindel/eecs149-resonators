@@ -115,9 +115,9 @@ class StartCharacteristic(Characteristic):
     def WriteValue(self, value, options):
         print("write to start detected with value " + str(int(bytes(value))))
         try:
-            songbird.start(int(bytes(value)))
-        except:
-            print("Unable to start Songbird!")
+            SongbirdService.songbird.start(int(bytes(value)))
+        except err:
+            print(err)
         self.value = int(bytes(value))
 
 class StopCharacteristic(Characteristic):
