@@ -55,7 +55,7 @@ static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *m
     printf("Initialization of songbird object complete.\n");
     fflush(stdout);
     //fluid_player_play((*new_songbird).player);
-    fluid_player_stop((*new_songbird).player);
+    //fluid_player_stop((*new_songbird).player);
     printf("Successfully stopped songbird object.\n");
     fflush(stdout);
     return 0;
