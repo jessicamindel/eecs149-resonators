@@ -106,7 +106,7 @@ static PyModuleDef songbirdmodule = {
     .m_size = -1,
 };
 
-PyMODINIT_FUNC PyInit_Songbird(void)
+PyMODINIT_FUNC PyInit_songbird(void)
 {
     PyObject *m;
     if (PyType_Ready(&songbirdType) < 0)
