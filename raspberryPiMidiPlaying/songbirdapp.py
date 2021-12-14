@@ -90,10 +90,16 @@ class SongbirdService(Service):
     def __init__(self, bus, index):
         songbird = mp.songbirdControl()
         Service.__init__(self, bus, index, self.SONGBIRD_SVC_UUID, True)
+        print("here1")
         self.add_characteristic(VolumeCharacteristic(bus, 0, self))
+        print("here2")
         self.add_characteristic(TempoCharacteristic(bus, 1, self))
+        print("here3")
         self.add_characteristic(StartCharacteristic(bus, 2, self))
+        print("here4")
         self.add_characteristic(StopCharacteristic(bus, 3, self))
+        print("here5")
+        
 
 class StartCharacteristic(Characteristic):
     uuid = "10f4c060-fdd1-49a5-898e-ab924709a558"
