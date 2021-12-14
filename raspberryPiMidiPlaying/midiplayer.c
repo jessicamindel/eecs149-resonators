@@ -13,6 +13,14 @@
 #include "structmember.h"
 #include "midiplayer.h"
 
+typedef struct {
+    PyObject_HEAD
+    fluid_settings_t* settings;
+    fluid_synth_t* synth;
+    fluid_player_t* player;
+    fluid_audio_driver_t* adriver;
+} songbirdControl;
+
 static PyTypeObject midiplayerType;
 
 static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *midifile) {
@@ -39,13 +47,6 @@ static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *m
 
     (*new_songbird).adriver = new_fluid_audio_driver((*new_songbird).settings, (*new_songbird).synth);
     printf("Initialization of songbird object complete.\n");
-    fflush(stdout);
-    
-    
-    fluid_player_play((*new_songbird).player);
-    fluid_player_join((*new_songbird).player);
-
-    printf("Done playing.\n");
     fflush(stdout);
     
     return 0;
@@ -134,9 +135,9 @@ static PyTypeObject midiplayerType = {
 
 static struct PyModuleDef midiplayermodule = {
     PyModuleDef_HEAD_INIT,
-    "midiplayer",
-    "Midiplayer operations",
-    -1,
+    .m_name = "midiplayer",
+    .m_doc = "Midiplayer operations",
+    .m_size = -1,
 };
 
 /* Initialize the midiplayer module */
