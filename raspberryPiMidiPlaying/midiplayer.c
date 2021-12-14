@@ -22,12 +22,9 @@ typedef struct {
 
 static PyTypeObject midiplayerType;
 
-int handle_tick(void *data, int tick) {
+int handle_tick(void *data) {
     fluid_player_t *player = (fluid_player_t *)data;
-    if(tick == 1000) {
-        return fluid_player_stop(player);
-    }
-    return 0;
+    return fluid_player_stop(player);
 }
 
 static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *midifile) {
@@ -41,7 +38,7 @@ static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *m
     (*new_songbird).synth = new_fluid_synth((*new_songbird).settings);
     (*new_songbird).player = new_fluid_player((*new_songbird).synth);
     fluid_settings_setstr((*new_songbird).settings, "audio.driver", "alsa");
-    fluid_player_set_tick_callback((*new_songbird).player, handle_tick, (*new_songbird).player)
+    fluid_player_set_playback_callback((*new_songbird).player, handle_tick, (*new_songbird).player)
     (*new_songbird).adriver = new_fluid_audio_driver((*new_songbird).settings, (*new_songbird).synth);
 
     if(fluid_synth_sfload((*new_songbird).synth, "sftarget.sf2", 1) < 0){
