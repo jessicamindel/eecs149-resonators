@@ -1,7 +1,7 @@
 #define PY_SSIZE_T_CLEAN
 #include <Python.h>
 #include <fluidsynth.h>
-#include "structmember.h"
+#include <structmember.h>
 
 
 typedef struct {
@@ -84,10 +84,10 @@ static PyMethodDef Songbird_methods[] = {
     {NULL}  /* Sentinel */
 };
 
-static PyTypeObject SongbirdType = {
+static PyTypeObject songbirdType = {
     PyVarObject_HEAD_INIT(NULL, 0)
     .tp_name = "songbird.Songbird",
-    .tp_doc = "Songbird objects",
+    .tp_doc = "songbird objects",
     .tp_basicsize = sizeof(Songbird),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
@@ -101,14 +101,14 @@ static PyTypeObject SongbirdType = {
 static PyModuleDef songbirdmodule = {
     PyModuleDef_HEAD_INIT,
     .m_name = "songbird",
-    .m_doc = "songbird module.",
+    .m_doc = "songbird module",
     .m_size = -1,
 };
 
 PyMODINIT_FUNC PyInit_Songbird(void)
 {
     PyObject *m;
-    if (PyType_Ready(&SongbirdType) < 0)
+    if (PyType_Ready(&songbirdType) < 0)
         return NULL;
 
     m = PyModule_Create(&songbirdmodule);

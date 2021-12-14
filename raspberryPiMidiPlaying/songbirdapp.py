@@ -85,7 +85,6 @@ def register_app_error_cb(error):
 
 class SongbirdService(Service):
     SONGBIRD_SVC_UUID = "314b2cb7-d379-474f-832f-6f833657e7e2"
-    songbird = None
 
     def __init__(self, bus, index):
         songbird = sgb.Songbird()
