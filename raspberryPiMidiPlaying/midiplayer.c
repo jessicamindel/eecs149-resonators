@@ -10,8 +10,7 @@
 #include <fluidsynth.h>
 #include <stdio.h>
 #include <Python.h>
-#include "structmember.h"
-#include "midiplayer.h"
+#include <structmember.h>
 
 typedef struct {
     PyObject_HEAD
