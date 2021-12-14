@@ -117,7 +117,7 @@ PyMODINIT_FUNC PyInit_Songbird(void)
 
     Py_INCREF(&songbirdType);
     if (PyModule_AddObject(m, "Songbird", (PyObject *) &songbirdType) < 0) {
-        Py_DECREF(&SongbirdType);
+        Py_DECREF(&songbirdType);
         Py_DECREF(m);
         return NULL;
     }
