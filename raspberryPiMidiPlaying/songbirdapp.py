@@ -90,7 +90,7 @@ class SongbirdService(Service):
     def __init__(self, bus, index):
         songbird = sgb.Songbird()
         print("hi")
-        #songbird.start_playing(bytes(0))
+        songbird.start(0)
         print("hi2")
         Service.__init__(self, bus, index, self.SONGBIRD_SVC_UUID, True)
         self.add_characteristic(VolumeCharacteristic(bus, 0, self))
