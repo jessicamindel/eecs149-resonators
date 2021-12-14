@@ -22,8 +22,18 @@ typedef struct {
 
 static PyTypeObject midiplayerType;
 
+int handle_tick(void *data, int tick) {
+    fluid_player_t *player = (fluid_player_t *)data;
+    if(tick == 1000) {
+        return fluid_player_stop(player);
+    }
+    return 0;
+}
+
 static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *midifile) {
     //fill this with the structure init
+    //clean up 
+
     songbirdControl *new_songbird;
     new_songbird = malloc(sizeof(songbirdControl));
 
@@ -31,18 +41,19 @@ static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *m
     (*new_songbird).synth = new_fluid_synth((*new_songbird).settings);
     (*new_songbird).player = new_fluid_player((*new_songbird).synth);
     fluid_settings_setstr((*new_songbird).settings, "audio.driver", "alsa");
+    fluid_player_set_tick_callback((*new_songbird).player, handle_tick, (*new_songbird).player)
     (*new_songbird).adriver = new_fluid_audio_driver((*new_songbird).settings, (*new_songbird).synth);
 
-    // if(fluid_synth_sfload((*new_songbird).synth, "sftarget.sf2", 1) < 0){
-    //     printf("Soundfont failed to load.\n");
-    //     fflush(stdout);
-    //     return -1;
-    // }
-    // if(fluid_player_add((*new_songbird).player, "miditarget.mid") < 0) {
-    //     printf("MIDI file failed to load.\n");
-    //     fflush(stdout);
-    //     return -1;
-    // }
+    if(fluid_synth_sfload((*new_songbird).synth, "sftarget.sf2", 1) < 0){
+        printf("Soundfont failed to load.\n");
+        fflush(stdout);
+        return -1;
+    }
+    if(fluid_player_add((*new_songbird).player, "miditarget.mid") < 0) {
+        printf("MIDI file failed to load.\n");
+        fflush(stdout);
+        return -1;
+    }
 
     printf("Initialization of songbird object complete.\n");
     fflush(stdout);
