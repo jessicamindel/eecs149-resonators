@@ -47,7 +47,8 @@ static int songbirdControl_init(PyObject *self, PyObject *soundfont, PyObject *m
     (*new_songbird).adriver = new_fluid_audio_driver((*new_songbird).settings, (*new_songbird).synth);
     printf("Initialization of songbird object complete.\n");
     fflush(stdout);
-    
+    fluid_player_stop((*new_songbird).player);
+    printf("Successfully stopped songbird object.\n");
     return 0;
 }
 
