@@ -14,6 +14,8 @@ typedef struct {
 } Songbird;
 
 static void Songbird_dealloc(Songbird *self) {
+    printf("Deallocating Songbird.\n");
+    fflush(stdout);
     delete_fluid_audio_driver(self->adriver);
     delete_fluid_player(self->player);
     delete_fluid_synth(self->synth);
