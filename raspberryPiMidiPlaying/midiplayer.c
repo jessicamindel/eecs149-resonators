@@ -54,7 +54,7 @@ static int *songbirdControl_start_playing(PyObject *self, PyObject *pyTick) {
     int tick = PyLong_AsLong(pyTick);
     printf("Now starting play at tick %i.\n", tick);
     fflush(stdout);
-    fluid_player_seek(((songbirdControl *)self)->player, tick);
+    fluid_player_seek(((songbirdControl *)self)->player, 0);
     fluid_player_play(((songbirdControl *)self)->player);
     return 0;
 }
