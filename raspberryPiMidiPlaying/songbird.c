@@ -100,8 +100,8 @@ static PyTypeObject SongbirdType = {
 
 static PyModuleDef songbirdmodule = {
     PyModuleDef_HEAD_INIT,
-    .m_name = "Songbird",
-    .m_doc = "Songbird module.",
+    .m_name = "songbird",
+    .m_doc = "songbird module.",
     .m_size = -1,
 };
 
@@ -121,7 +121,7 @@ PyMODINIT_FUNC PyInit_Songbird(void)
         Py_DECREF(m);
         return NULL;
     }
-    printf("Successful import of Songbird!\n");
+    printf("Successful import of songbird!\n");
     fflush(stdout);
     return m;
 }
