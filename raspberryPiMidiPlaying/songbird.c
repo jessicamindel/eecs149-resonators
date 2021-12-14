@@ -52,14 +52,6 @@ static int Songbird_init(Songbird *self, PyObject *args, PyObject *kwds)
 }
 
 static PyMemberDef Songbird_members[] = {
-    {"settings", fluid_settings_t, offsetof(Songbird, settings), 0,
-     "settings"},
-    {"synth", fluid_synth_t, offsetof(Songbird, synth), 0,
-     "synth"},
-    {"player", fluid_player_t, offsetof(Songbird, player), 0,
-     "player"},
-    {"adriver", fluid_audio_driver_t, offsetof(Songbird, adriver), 0,
-     "adriver"},
     {NULL}  /* Sentinel */
 };
 
@@ -71,7 +63,6 @@ static int Songbird_start_playing(Songbird *self, PyObject *pyTick) {
 
 static int Songbird_stop_playing(Songbird *self) {
     fluid_player_stop(self->player);
-    self.Songbird_dealloc();
     return 0;
 }
 
