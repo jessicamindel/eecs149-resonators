@@ -1,15 +1,6 @@
 /*
 * REEEEEEEE stolen codeeeeeeeeeee (not rly)
 */
-#include <fluidsynth.h>
-
-typedef struct {
-    PyObject_HEAD
-    fluid_settings_t* settings;
-    fluid_synth_t* synth;
-    fluid_player_t* player;
-    fluid_audio_driver_t* adriver;
-} songbirdControl;
 
 /*
 * ooga booga write all the functions down here ok

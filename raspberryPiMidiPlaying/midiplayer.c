@@ -19,7 +19,7 @@ typedef struct {
     fluid_synth_t* synth;
     fluid_player_t* player;
     fluid_audio_driver_t* adriver;
-} songbirdControl;
+}songbirdControl;
 
 static PyTypeObject midiplayerType;
 
