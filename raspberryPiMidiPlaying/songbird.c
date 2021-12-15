@@ -62,30 +62,36 @@ static void *Songbird_start_playing(Songbird *self, PyObject *pyTick,PyObject *P
     fluid_player_stop(self->player);
     fluid_player_seek(self->player, 0); //restarts it
     fluid_player_play(self->player);
+    return 0;
 }
 
 static void *Songbird_stop_playing(Songbird *self, PyObject *Py_UNUSED(ignored)) {
     fluid_player_stop(self->player);
+    return 0;
 }
 
 static void *Songbird_incVol(Songbird *self, PyObject *Py_UNUSED(ignored)) {
     float gain = fluid_synth_get_gain(self->synth);
     fluid_synth_set_gain(self->synth, gain + 0.1);
+    return 0;
 }
 
 static void *Songbird_decVol(Songbird *self, PyObject *Py_UNUSED(ignored)) {
     float gain = fluid_synth_get_gain(self->synth);
     fluid_synth_set_gain(self->synth, gain - 0.1);
+    return 0;
 }
 
 static void *Songbird_incTempo(Songbird *self, PyObject *Py_UNUSED(ignored)) {
     int tempo = fluid_player_get_midi_tempo(self->player);
     fluid_player_set_midi_tempo(self->player, tempo + 10);
+    return 0;
 }
 
 static void *Songbird_decTempo(Songbird *self, PyObject *Py_UNUSED(ignored)) {
     int tempo = fluid_player_get_midi_tempo(self->player);	
     fluid_player_set_midi_tempo(self->player, tempo - 10);
+    return 0;
 }
 
 static PyMethodDef Songbird_methods[] = {
