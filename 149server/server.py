@@ -178,35 +178,35 @@ def send_midi():
     return f'MIDI sent.'
 
 def query_cereal():
-    while True:
-        print("querying")
-        action = read_serial()
-        if action == 0:
-            decvol()
-            dectempo()
-        elif action == 1:
-            decvol()
-        elif action == 2:
-            decvol()
-            inctempo()
-        elif action == 3:
-            dectempo()
-        elif action == 5:
-            inctempo()
-        elif action == 6:
-            incvol()
-            dectempo()
-        elif action == 7:
-            incvol()
-        elif action == 8:
-            incvol()
-            incTempo()
-        time.sleep(1)
-        print("end query")
-        if action != 4:
-            return f'adjusting'
-        return f'no adjust'
+    print("querying")
+    action = read_serial()
+    if action == 0:
+        decvol()
+        dectempo()
+    elif action == 1:
+        decvol()
+    elif action == 2:
+        decvol()
+        inctempo()
+    elif action == 3:
+        dectempo()
+    elif action == 5:
+        inctempo()
+    elif action == 6:
+        incvol()
+        dectempo()
+    elif action == 7:
+        incvol()
+    elif action == 8:
+        incvol()
+        incTempo()
+    time.sleep(1)
+    print("end query")
+    if action != 4:
+        return f'adjusting'
+    return f'no adjust'
     
+stop_query_cereal = launch_thread(lambda: query_cereal())
 
 # # TODO TEMP READ LOOP
 # while 1:
