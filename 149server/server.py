@@ -25,6 +25,7 @@ executor = Executor(app)
 midi = None
 devices = []
 proc = None
+proc2 = None
 
 ble = {
     "service": "314b2cb7-d379-474f-832f-6f833657e7e2",
@@ -117,54 +118,68 @@ def connect():
     #loop = asyncio.get_event_loop()
     global devices
     global proc
+    global proc2
     global executor
 
     executor.submit(query_cereal)
 
-    proc = subprocess.Popen("python bleakout.py", stdin=subprocess.PIPE,shell=True)
+    proc = subprocess.Popen("python control_test.py DC:A6:32:72:88:9B -t 60", stdin=subprocess.PIPE,shell=True)
+    proc2 = subprocess.Popen("python control_test.py E4:5F:01:59:3D:2A -t 60", stdin=subprocess.PIPE,shell=True)
     return f'Connected to devices.'
 
 @app.route('/play', methods=['POST'])
 def play(send_osc=True):
     global midi
     global proc
+    global proc2
     if midi is None:
        return "Can't play."
     #currently no tick seek, just gonna write it at 0
     if send_osc: osc_out.send_message('/resume', 1)
     outs, errs = proc.communicate(input = bytes('0 0\n', "utf-8"))
+    outs, errs = proc2.communicate(input = bytes('0 0\n', "utf-8"))
     return f'Playing.'
 
 @app.route('/stop', methods=['POST'])
 def stop(send_osc=True):
     global proc
+    global proc2
     # client.write_gatt_char(ble["stop"])
     if send_osc: osc_out.send_message('/pause', 1)
     outs, errs = proc.communicate(input = bytes('1 0\n', "utf-8"))
+    outs, errs = proc2.communicate(input = bytes('1 0\n', "utf-8"))
     return f'Stopping.'
 
 @app.route('/incvol', methods=['POST'])
 def incvol():
     global proc
+    global proc2
     outs, errs = proc.communicate(input = bytes('2 1\n', "utf-8"))
+    outs, errs = proc2.communicate(input = bytes('2 1\n', "utf-8"))
     return f'Volume increased.'
 
 @app.route('/decvol', methods=['POST'])
 def decvol():
     global proc
+    global proc2
     outs, errs = proc.communicate(input = bytes('2 0\n', "utf-8"))
+    outs, errs = proc2.communicate(input = bytes('2 0\n', "utf-8"))
     return f'Volume decreased.'
 
 @app.route('/inctempo', methods=['POST'])
 def inctempo():
     global proc
+    global proc2
     outs, errs = proc.communicate(input = bytes('3 1\n', "utf-8"))
+    outs, errs = proc2.communicate(input = bytes('3 1\n', "utf-8"))
     return f'Increasing tempo.'
 
 @app.route('/dectempo', methods=['POST'])
 def dectempo():
     global proc
+    global proc2
     outs, errs = proc.communicate(input = bytes('3 0\n', "utf-8"))
+    outs, errs = proc2.communicate(input = bytes('3 0\n', "utf-8"))
     return f'Decreasing tempo.'
 
 @app.route('/midi', methods=['POST'])
@@ -178,7 +193,6 @@ def send_midi():
     return f'MIDI sent.'
 
 def query_cereal():
-    print("querying")
     action = read_serial()
     if action == 0:
         decvol()
@@ -200,8 +214,7 @@ def query_cereal():
     elif action == 8:
         incvol()
         incTempo()
-    time.sleep(1)
-    print("end query")
+    time.sleep(1) 
     if action != 4:
         return f'adjusting'
     return f'no adjust'
