@@ -4,6 +4,10 @@ from flask_cors import CORS
 #from backend/ble_utils import parse_ble_args    don't think we need to use here - Jet
 from bleak import BleakClient, BleakError
 
+
+#from . import _winrt
+#_winrt.init_apartment(_winrt.MTA) #keeping these two lines here because something is sus about windows
+
 app = Flask(__name__)
 CORS(app)
 
@@ -39,17 +43,17 @@ async def connect_to_device(address):
         while True:
             await asyncio.sleep(1.0) #this keeps it connected hopefully forever
 
-async def send(address, uuid, data):
-    print(f"searching for device {address} ({timeout}s timeout)")
-    try:
-        async with BleakClient(address, timeout = timeout) as client:
-            print("Successfully connected to device with address: " + str(address))
-            try:
-                await client.write_gatt_char(uuid, bytes(data, 'utf-8'))
-            except Exception as e:
-                print(f"\t{e}")
-    except BleakError as e:
-        print("not found")
+# async def send(address, uuid, data):
+#     print(f"searching for device {address} ({timeout}s timeout)")
+#     try:
+#         async with BleakClient(address, timeout = timeout) as client:
+#             print("Successfully connected to device with address: " + str(address))
+#             try:
+#                 await client.write_gatt_char(uuid, bytes(data, 'utf-8'))
+#             except Exception as e:
+#                 print(f"\t{e}")
+#     except BleakError as e:
+#         print("not found")
 
 @app.route("/", methods=['GET', 'POST'])
 def hello_world():
@@ -87,7 +91,7 @@ def stop():
     asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-bb924709a558", bytes("0", 'utf-8')) for client in clients))
     return f'Stopping.'
 
-@app.route('/vol/<double:vol>', methods=['POST'])
+@app.route('/vol/<float:vol>', methods=['POST'])
 def send_vol(vol):
     global clients
     asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-db924709a558", bytes(vol, 'utf-8')) for client in clients))
