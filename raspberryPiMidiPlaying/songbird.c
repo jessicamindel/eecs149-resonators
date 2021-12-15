@@ -35,6 +35,7 @@ static int Songbird_init(Songbird *self, PyObject *args, PyObject *kwds)
     self->settings = new_fluid_settings();
     self->synth = new_fluid_synth(self->settings);
     self->player = new_fluid_player(self->synth);
+    fluid_synth_set_gain(self->synth, 5);
     fluid_settings_setstr(self->settings, "audio.driver", "alsa");
     self->adriver = new_fluid_audio_driver(self->settings, self->synth);
 
@@ -59,27 +60,48 @@ static PyMemberDef Songbird_members[] = {
 };
 
 static void *Songbird_start_playing(Songbird *self, PyObject *pyTick,PyObject *Py_UNUSED(ignored)) {
-    fluid_player_seek(self->player, PyLong_AsLong(pyTick));
-    fluid_player_play(self->player);
-}
-
-static void *Songbird_stop_playing(Songbird *self,PyObject *Py_UNUSED(ignored)) {
     fluid_player_stop(self->player);
+    fluid_player_seek(self->player, 0); //restarts it
+    fluid_player_play(self->player);
+    return 0;
 }
 
-static void *Songbird_adjust_volume(Songbird *self, PyObject *pyVol,PyObject *Py_UNUSED(ignored)) {
-    fluid_synth_set_gain(self->synth, PyFloat_AsDouble(pyVol));
+static void *Songbird_stop_playing(Songbird *self, PyObject *Py_UNUSED(ignored)) {
+    fluid_player_stop(self->player);
+    return 0;
 }
 
-static void *Songbird_adjust_tempo(Songbird *self, PyObject *pyBpm,PyObject *Py_UNUSED(ignored)) {
-    fluid_player_set_bpm(self->player, PyLong_AsLong(pyBpm));
+static void *Songbird_incVol(Songbird *self, PyObject *Py_UNUSED(ignored)) {
+    float gain = fluid_synth_get_gain(self->synth);
+    fluid_synth_set_gain(self->synth, gain + 0.1);
+    return 0;
+}
+
+static void *Songbird_decVol(Songbird *self, PyObject *Py_UNUSED(ignored)) {
+    float gain = fluid_synth_get_gain(self->synth);
+    fluid_synth_set_gain(self->synth, gain - 0.1);
+    return 0;
+}
+
+static void *Songbird_incTempo(Songbird *self, PyObject *Py_UNUSED(ignored)) {
+    int tempo = fluid_player_get_midi_tempo(self->player);
+    fluid_player_set_midi_tempo(self->player, tempo + 10);
+    return 0;
+}
+
+static void *Songbird_decTempo(Songbird *self, PyObject *Py_UNUSED(ignored)) {
+    int tempo = fluid_player_get_midi_tempo(self->player);	
+    fluid_player_set_midi_tempo(self->player, tempo - 10);
+    return 0;
 }
 
 static PyMethodDef Songbird_methods[] = {
     {"start", (PyCFunction) Songbird_start_playing, METH_VARARGS,"start"},
     {"stop", (PyCFunction) Songbird_stop_playing, METH_VARARGS,"stop"},
-    {"vol", (PyCFunction) Songbird_adjust_volume, METH_VARARGS,"vol"},
-    {"bpm", (PyCFunction) Songbird_adjust_tempo, METH_VARARGS,"bpm"},
+    {"incVol", (PyCFunction) Songbird_incVol, METH_VARARGS,"incVol"},
+    {"decVol", (PyCFunction) Songbird_decVol, METH_VARARGS,"decVol"},
+    {"incTempo", (PyCFunction) Songbird_incTempo, METH_VARARGS,"incTempo"},
+    {"decTempo", (PyCFunction) Songbird_decTempo, METH_VARARGS,"decTempo"},
     {NULL}  /* Sentinel */
 };
 

@@ -68,6 +68,54 @@ function App() {
     }
   }
 
+  const [deviceAddress, setDeviceAddress] = useState('');
+  const deviceAddressInputAndButton = () => 
+    <>
+        <input
+            type="text"
+            value={deviceAddress}
+            onChange={(e)=>setDeviceAddress(e.target.value)}
+        />
+        <button
+            onClick={()=>{
+                axios({
+                    method: "post",
+                    url: `http://localhost:${PORT}/add/${deviceAddress}`,
+                    headers: { 'Content-Type': 'application/json' },
+                  })
+                    .then((response) => {
+                      //handle success
+                      setGetMessage(response);
+                    })
+                    .catch((response) => {
+                      console.log(response);
+                    });
+                }
+            }
+        >add</button>
+    </>;
+
+  const connectToDevicesButton = () => 
+    <>
+        <button
+            onClick={()=>{
+                axios({
+                    method: "post",
+                    url: `http://localhost:${PORT}/connect`,
+                    headers: { 'Content-Type': 'application/json' },
+                  })
+                    .then((response) => {
+                      //handle success
+                      setGetMessage(response);
+                    })
+                    .catch((response) => {
+                      console.log(response);
+                    });
+                }
+            }
+        >connect</button>
+    </>;
+
   return (
     <div className="App" style={{backgroundColor: 'beige'}}>
       <header className="App-header">
@@ -76,7 +124,19 @@ function App() {
           <div className="side-by-side">
 
             {MIDIUpload(uploadMIDI)}
-            
+
+          </div>
+
+          {Padding(80)}
+
+          <div className="side-by-side">
+
+            {deviceAddressInputAndButton()}
+
+            {Padding(200)}
+
+            {connectToDevicesButton()}
+
           </div>
 
           {Padding(80)}
