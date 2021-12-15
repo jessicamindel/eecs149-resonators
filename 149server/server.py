@@ -5,11 +5,13 @@ from flask_cors import CORS
 from bleak import BleakClient, BleakError
 import asyncio
 import sys
+import serial
 from getpass import getpass
 from pythonosc.udp_client import SimpleUDPClient
 from pythonosc.osc_server import BlockingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 from backend.thread_utils import launch_thread
+
 
 #from . import _winrt
 #_winrt.init_apartment(_winrt.MTA) #keeping these two lines here because something is sus about windows
@@ -41,6 +43,10 @@ ports = {
     "osc_receive": 3003,
     "flask": 5000,
 }
+
+# TODO SET PORT
+serialport = '/dev/tty.usbmodem0006825138641'
+baudrate = 115200
 
 async def connect_to_device(address):
     global devices
@@ -79,6 +85,11 @@ osc_in_stop_listening = launch_thread(lambda: osc_in.handle_request())
 # TODO: Call this function at some point. Alternatively, don't run this in a 
 # separate thread; this might not work with bluetooth because it's on the main
 # thread, but unsure (can't test from where I am).
+
+ser = serial.Serial()
+ser.baudrate = baudrate
+ser.port = serialport
+ser.open()
 
 @app.route("/", methods=['GET', 'POST'])
 def hello_world():
@@ -140,4 +151,9 @@ def send_midi():
     # in Ableton Live. Not the cleanest, but given that we're not supporting changing
     # the MIDI file in realtime over bluetooth anymore, this is fine.
     return f'MIDI sent.'
+
+
+while (1):
+    line = ser.readline()
+    print(line)
 
