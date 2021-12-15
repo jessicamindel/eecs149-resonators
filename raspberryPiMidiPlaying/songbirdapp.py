@@ -161,7 +161,7 @@ class VolumeCharacteristic(Characteristic):
 
     def WriteValue(self, value, options):
         try:
-            SongbirdService.songbird.adjust_volume(float(bytes(value)))
+            SongbirdService.songbird.vol(float(bytes(value)))
         except:
             print("Unable to adjust volume on Songbird!")
         self.value = int(bytes(value))
