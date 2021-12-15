@@ -6,11 +6,13 @@ import sys
 import serial
 import time
 from getpass import getpass
+from threading import Thread
 from pythonosc.udp_client import SimpleUDPClient
 from pythonosc.osc_server import BlockingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 from backend.thread_utils import launch_thread
 import subprocess
+from concurrent.futures import ThreadPoolExecutor
 
 
 #from . import _winrt
@@ -52,6 +54,8 @@ ser = serial.Serial()
 ser.baudrate = baudrate
 ser.port = serialport
 ser.open()
+
+executor = ThreadPoolExecutor(2)
 
 # async def connect_to_device(address):
 #     global devices
@@ -95,7 +99,6 @@ osc_in_stop_listening = launch_thread(lambda: osc_in.handle_request())
 # separate thread; this might not work with bluetooth because it's on the main
 # thread, but unsure (can't test from where I am).
 
-
 @app.route("/", methods=['GET', 'POST'])
 def hello_world():
     if request.method == 'POST':
@@ -115,6 +118,9 @@ def connect():
     #loop = asyncio.get_event_loop()
     global devices
     global proc
+
+    executor.submit(query_cereal)
+
     proc = subprocess.Popen("python bleakout.py", stdin=subprocess.PIPE,shell=True)
     return f'Connected to devices.'
 
@@ -171,6 +177,34 @@ def send_midi():
     # the MIDI file in realtime over bluetooth anymore, this is fine.
     return f'MIDI sent.'
 
+def query_cereal():
+    print("querying")
+    action = read_serial()
+    if action == 0:
+        decvol()
+        dectempo()
+    elif action == 1:
+        decvol()
+    elif action == 2:
+        decvol()
+        inctempo()
+    elif action == 3:
+        dectempo()
+    elif action == 5:
+        inctempo()
+    elif action == 6:
+        incvol()
+        dectempo()
+    elif action == 7:
+        incvol()
+    elif action == 8:
+        incvol()
+        incTempo()
+    time.sleep(0.5)
+    if action != 4:
+        return f'adjusting'
+    return f'no adjust'
+    
 
 # # TODO TEMP READ LOOP
 # while 1:

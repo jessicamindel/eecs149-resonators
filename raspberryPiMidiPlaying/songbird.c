@@ -35,6 +35,7 @@ static int Songbird_init(Songbird *self, PyObject *args, PyObject *kwds)
     self->settings = new_fluid_settings();
     self->synth = new_fluid_synth(self->settings);
     self->player = new_fluid_player(self->synth);
+    fluid_synth_set_gain(self->synth, 5);
     fluid_settings_setstr(self->settings, "audio.driver", "alsa");
     self->adriver = new_fluid_audio_driver(self->settings, self->synth);
 
