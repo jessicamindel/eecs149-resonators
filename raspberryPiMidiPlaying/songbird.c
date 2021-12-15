@@ -59,11 +59,11 @@ static PyMemberDef Songbird_members[] = {
 };
 
 static void *Songbird_start_playing(Songbird *self, PyObject *pyTick,PyObject *Py_UNUSED(ignored)) {
-    fluid_player_seek(self->player, PyLong_AsLong(pyTick));
+    fluid_player_seek(self->player, PyLong_AsLong(pyTick)); //this doesn't work but I'm going to leave it here since i don't want to break it.
     fluid_player_play(self->player);
 }
 
-static void *Songbird_stop_playing(Songbird *self,PyObject *Py_UNUSED(ignored)) {
+static void *Songbird_stop_playing(Songbird *self) {
     fluid_player_stop(self->player);
 }
 
