@@ -1,6 +1,7 @@
 import './App.css';
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
+import { PORT } from './App';
 
 function TempoControl(debug = false) {
     const incrementTaps = () => {
@@ -61,7 +62,7 @@ function TempoControl(debug = false) {
     }
 
     const sendBPM = () => {
-        axios.post('http://localhost:5000/tempo/' + parseInt(bpm))
+        axios.post(`http://localhost:${PORT}/tempo/` + parseInt(bpm))
         .then(response => {console.log(response)})
     }
 

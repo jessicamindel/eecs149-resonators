@@ -8,11 +8,13 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import MediaControl from './MediaControl';
 
+export const PORT = 5000;
+
 function App() {
   const [getMessage, setGetMessage] = useState({});
 
   useEffect(() => {
-    axios.get('http://localhost:5000/').then(response => {
+    axios.get(`http://localhost:${PORT}/`).then(response => {
       console.log("Connecting to backend: ", response)
       setGetMessage(response)
     }).catch(error => {
@@ -35,7 +37,7 @@ function App() {
     reader.onload = function () {
       axios({
         method: "post",
-        url: "http://localhost:5000/midi",
+        url: `http://localhost:${PORT}/midi`,
         data: reader.result,
         headers: { 'Content-Type': 'application/json' },
       })
@@ -54,7 +56,7 @@ function App() {
     return () => {
       axios({
         method: "post",
-        url: "http://localhost:5000/" + url
+        url: `http://localhost:${PORT}/${url}`
       })
         .then((response) => {
           setGetMessage(response);
