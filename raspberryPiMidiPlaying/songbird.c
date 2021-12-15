@@ -59,19 +59,23 @@ static PyMemberDef Songbird_members[] = {
 };
 
 static void *Songbird_start_playing(Songbird *self, PyObject *pyTick,PyObject *Py_UNUSED(ignored)) {
-    fluid_player_seek(self->player, PyLong_AsLong(pyTick)); //this doesn't work but I'm going to leave it here since i don't want to break it.
+    fluid_player_seek(self->player, 0); //restarts it
     fluid_player_play(self->player);
 }
 
-static void *Songbird_stop_playing(Songbird *self) {
+static void *Songbird_stop_playing(Songbird *self, ,PyObject *Py_UNUSED(ignored)) {
     fluid_player_stop(self->player);
 }
 
-static void *Songbird_adjust_volume(Songbird *self, PyObject *pyVol,PyObject *Py_UNUSED(ignored)) {
+static void *Songbird_adjust_volume(Songbird *self, PyObject *Py_UNUSED(ignored), PyObject *pyVol,) {
+    printf("got inside the func %s", pyVol);
+    fflush(stdout);
     fluid_synth_set_gain(self->synth, PyFloat_AsDouble(pyVol));
 }
 
-static void *Songbird_adjust_tempo(Songbird *self, PyObject *pyBpm,PyObject *Py_UNUSED(ignored)) {
+static void *Songbird_adjust_tempo(Songbird *self, PyObject *Py_UNUSED(ignored), PyObject *pyBpm,) {
+    printf("got inside the func %s", pyBpm);
+    fflush(stdout);
     fluid_player_set_bpm(self->player, PyLong_AsLong(pyBpm));
 }
 
