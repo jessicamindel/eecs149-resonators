@@ -1,8 +1,6 @@
 from flask import Flask
 from flask import request
 from flask_cors import CORS
-#from backend/ble_utils import parse_ble_args    don't think we need to use here - Jet
-#from bleak import BleakClient, BleakError
 import asyncio
 import sys
 import serial
@@ -117,44 +115,50 @@ def connect():
     #loop = asyncio.get_event_loop()
     global devices
     global proc
-    proc = subprocess.Popen("bleakout.py")
+    proc = subprocess.Popen("python bleakout.py", stdin=subprocess.PIPE,shell=True)
     return f'Connected to devices.'
 
 @app.route('/play', methods=['POST'])
 def play(send_osc=True):
     global midi
-    if midi is None:
-        return "Can't play."
+    global proc
+    # if midi is None:
+    #    return "Can't play."
     #currently no tick seek, just gonna write it at 0
     if send_osc: osc_out.send_message('/resume', 1)
-    outs, errs = proc.communicate("0 0")
+    outs, errs = proc.communicate(input = bytes('0 0\n', "utf-8"))
     return f'Playing.'
 
 @app.route('/stop', methods=['POST'])
 def stop(send_osc=True):
+    global proc
     # client.write_gatt_char(ble["stop"])
     if send_osc: osc_out.send_message('/pause', 1)
-    outs, errs = proc.communicate("1 0")
+    outs, errs = proc.communicate(input = bytes('1 0\n', "utf-8"))
     return f'Stopping.'
 
 @app.route('/incvol', methods=['POST'])
 def incvol():
-    outs, errs = proc.communicate("2 1")
+    global proc
+    outs, errs = proc.communicate(input = bytes('2 1\n', "utf-8"))
     return f'Volume increased.'
 
 @app.route('/decvol', methods=['POST'])
 def decvol():
-    outs, errs = proc.communicate("2 0")
+    global proc
+    outs, errs = proc.communicate(input = bytes('2 0\n', "utf-8"))
     return f'Volume decreased.'
 
 @app.route('/inctempo', methods=['POST'])
 def inctempo():
-    outs, errs = proc.communicate("3 1")
+    global proc
+    outs, errs = proc.communicate(input = bytes('3 1\n', "utf-8"))
     return f'Increasing tempo.'
 
 @app.route('/dectempo', methods=['POST'])
 def dectempo():
-    outs, errs = proc.communicate("3 0")
+    global proc
+    outs, errs = proc.communicate(input = bytes('3 0\n', "utf-8"))
     return f'Decreasing tempo.'
 
 @app.route('/midi', methods=['POST'])
