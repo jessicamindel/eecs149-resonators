@@ -59,6 +59,7 @@ static PyMemberDef Songbird_members[] = {
 };
 
 static void *Songbird_start_playing(Songbird *self, PyObject *pyTick,PyObject *Py_UNUSED(ignored)) {
+    fluid_player_stop(self->player);
     fluid_player_seek(self->player, 0); //restarts it
     fluid_player_play(self->player);
 }
