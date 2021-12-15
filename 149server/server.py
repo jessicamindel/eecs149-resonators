@@ -6,6 +6,7 @@ from bleak import BleakClient, BleakError
 import asyncio
 import sys
 import serial
+import time
 from getpass import getpass
 from pythonosc.udp_client import SimpleUDPClient
 from pythonosc.osc_server import BlockingOSCUDPServer
@@ -44,9 +45,14 @@ ports = {
     "flask": 5000,
 }
 
-# TODO SET PORT
+# TODO: SET PORT HERE
 serialport = '/dev/tty.usbmodem0006825138641'
 baudrate = 115200
+
+ser = serial.Serial()
+ser.baudrate = baudrate
+ser.port = serialport
+ser.open()
 
 async def connect_to_device(address):
     global devices
@@ -77,6 +83,10 @@ def receive_osc_input(address, *args):
         stop(send_osc=False)
     # Ignore all other messages
 
+def read_serial():
+    line = ser.read()
+    return line
+
 osc_out = SimpleUDPClient(ip, ports['osc_send'])
 osc_dispatcher = Dispatcher()
 osc_dispatcher.map('/*', receive_osc_input)
@@ -86,10 +96,6 @@ osc_in_stop_listening = launch_thread(lambda: osc_in.handle_request())
 # separate thread; this might not work with bluetooth because it's on the main
 # thread, but unsure (can't test from where I am).
 
-ser = serial.Serial()
-ser.baudrate = baudrate
-ser.port = serialport
-ser.open()
 
 @app.route("/", methods=['GET', 'POST'])
 def hello_world():
@@ -153,7 +159,8 @@ def send_midi():
     return f'MIDI sent.'
 
 
-while (1):
-    line = ser.readline()
-    print(line)
+# # TODO TEMP READ LOOP
+# while 1:
+#     print(read_serial())
+
 
