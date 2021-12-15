@@ -68,23 +68,33 @@ static void *Songbird_stop_playing(Songbird *self, PyObject *Py_UNUSED(ignored))
     fluid_player_stop(self->player);
 }
 
-static void *Songbird_adjust_volume(Songbird *self, PyObject *Py_UNUSED(ignored), PyObject *pyVol) {
-    printf("got inside the func %f", PyFloat_AsDouble(pyVol));
-    fflush(stdout);
-    fluid_synth_set_gain(self->synth, PyFloat_AsDouble(pyVol));
+static void *Songbird_incVol(Songbird *self, PyObject *Py_UNUSED(ignored)) {
+    float gain = fluid_synth_get_gain(self->synth);
+    fluid_synth_set_gain(self->synth, gain + 0.1);
 }
 
-static void *Songbird_adjust_tempo(Songbird *self, PyObject *Py_UNUSED(ignored), PyObject *pyBpm) {
-    printf("got inside the func %i", PyLong_AsLong(pyBpm));
-    fflush(stdout);
-    fluid_player_set_bpm(self->player, PyLong_AsLong(pyBpm));
+static void *Songbird_decVol(Songbird *self, PyObject *Py_UNUSED(ignored)) {
+    float gain = fluid_synth_get_gain(self->synth);
+    fluid_synth_set_gain(self->synth, gain - 0.1);
+}
+
+static void *Songbird_incTempo(Songbird *self, PyObject *Py_UNUSED(ignored)) {
+    int tempo = fluid_player_get_midi_tempo(self->player);
+    fluid_player_set_midi_tempo(self->player, tempo + 10);
+}
+
+static void *Songbird_decTempo(Songbird *self, PyObject *Py_UNUSED(ignored)) {
+    int tempo = fluid_player_get_midi_tempo(self->player);	
+    fluid_player_set_midi_tempo(self->player, tempo - 10);
 }
 
 static PyMethodDef Songbird_methods[] = {
     {"start", (PyCFunction) Songbird_start_playing, METH_VARARGS,"start"},
     {"stop", (PyCFunction) Songbird_stop_playing, METH_VARARGS,"stop"},
-    {"vol", (PyCFunction) Songbird_adjust_volume, METH_VARARGS,"vol"},
-    {"bpm", (PyCFunction) Songbird_adjust_tempo, METH_VARARGS,"bpm"},
+    {"incVol", (PyCFunction) Songbird_adjust_volume, METH_VARARGS,"incVol"},
+    {"decVol", (PyCFunction) Songbird_adjust_volume, METH_VARARGS,"decVol"},
+    {"incTempo", (PyCFunction) Songbird_adjust_tempo, METH_VARARGS,"incTempo"},
+    {"decTempo", (PyCFunction) Songbird_adjust_tempo, METH_VARARGS,"decTempo"},
     {NULL}  /* Sentinel */
 };
 

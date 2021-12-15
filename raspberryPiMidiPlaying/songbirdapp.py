@@ -160,10 +160,16 @@ class VolumeCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
-        try:
-            SongbirdService.songbird.vol(float(bytes(value)))
-        except:
-            print("Unable to adjust volume on Songbird!")
+        if(int(bytes(value))):
+            try:
+                SongbirdService.songbird.incVol()
+            except:
+                print("Unable to adjust volume on Songbird!")
+        else:
+            try:
+                SongbirdService.songbird.decVol()
+            except:
+                print("Unable to adjust volume on Songbird!")
         self.value = int(bytes(value))
 
 class TempoCharacteristic(Characteristic):
@@ -183,10 +189,16 @@ class TempoCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
-        try:
-            SongbirdService.songbird.bpm(int(bytes(tempo)))
-        except:
-            print("Unable to adjust tempo on Songbird!")
+        if(int(bytes(value))):
+            try:
+                SongbirdService.songbird.incTempo()
+            except:
+                print("Unable to adjust tempo on Songbird!")
+        else:
+            try:
+                SongbirdService.songbird.decTempo()
+            except:
+                print("Unable to adjust tempo on Songbird!")
         self.value = int(bytes(value))
 
 class CharacteristicUserDescriptionDescriptor(Descriptor):
