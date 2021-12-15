@@ -91,10 +91,10 @@ static void *Songbird_decTempo(Songbird *self, PyObject *Py_UNUSED(ignored)) {
 static PyMethodDef Songbird_methods[] = {
     {"start", (PyCFunction) Songbird_start_playing, METH_VARARGS,"start"},
     {"stop", (PyCFunction) Songbird_stop_playing, METH_VARARGS,"stop"},
-    {"incVol", (PyCFunction) Songbird_adjust_volume, METH_VARARGS,"incVol"},
-    {"decVol", (PyCFunction) Songbird_adjust_volume, METH_VARARGS,"decVol"},
-    {"incTempo", (PyCFunction) Songbird_adjust_tempo, METH_VARARGS,"incTempo"},
-    {"decTempo", (PyCFunction) Songbird_adjust_tempo, METH_VARARGS,"decTempo"},
+    {"incVol", (PyCFunction) Songbird_incVol, METH_VARARGS,"incVol"},
+    {"decVol", (PyCFunction) Songbird_decVol, METH_VARARGS,"decVol"},
+    {"incTempo", (PyCFunction) Songbird_incTempo, METH_VARARGS,"incTempo"},
+    {"decTempo", (PyCFunction) Songbird_decTempo, METH_VARARGS,"decTempo"},
     {NULL}  /* Sentinel */
 };
 
