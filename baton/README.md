@@ -21,4 +21,4 @@ Rotate around the axis running parallel with your arm to adjust tempo.
 
 Tilt upwards and downwards while keeping the pins/display facing to the right to adjust volume.
 
-![diagram](./diagram.jpeg)
+![diagram](./diagram.png)
