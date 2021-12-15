@@ -6,7 +6,10 @@ from bleak import BleakClient, BleakError
 import asyncio
 import sys
 from getpass import getpass
-
+from pythonosc.udp_client import SimpleUDPClient
+from pythonosc.osc_server import BlockingOSCUDPServer
+from pythonosc.dispatcher import Dispatcher
+from backend.thread_utils import launch_thread
 
 #from . import _winrt
 #_winrt.init_apartment(_winrt.MTA) #keeping these two lines here because something is sus about windows
@@ -23,18 +26,20 @@ ble = {
     "start": "10f4c060-fdd1-49a5-898e-ab924709a558",
     "stop": "10f4c060-fdd1-49a5-898e-bb924709a558",
     "volume": "10f4c060-fdd1-49a5-898e-db924709a558",
-    "tempo": "10f4c060-fdd1-49a5-898e-eb924709a558"
+    "tempo": "10f4c060-fdd1-49a5-898e-eb924709a558",
 }
+
+ip = "127.0.0.1"
 
 ports = {
     # Webserver (React): 3000
     # Webserver OSC send: 3001
-    # Webserver OSC receive: 3002
+    # Webserver OSC receive: 3003 (temp modification, may need to change again)
     # Webserver (Flask): 5000
     "react": 3000,
     "osc_send": 3001,
-    "osc_receive": 3002,
-    "flask": 5000
+    "osc_receive": 3003,
+    "flask": 5000,
 }
 
 async def connect_to_device(address):
@@ -58,6 +63,23 @@ async def connect_to_device(address):
 #     except BleakError as e:
 #         print("not found")
 
+def receive_osc_input(address, *args):
+    print("Received OSC: " + address + " " + " ".join(args))
+    if (address == "/resume"):
+        play(send_osc=False)
+    elif (address == "/pause"):
+        stop(send_osc=False)
+    # Ignore all other messages
+
+osc_out = SimpleUDPClient(ip, ports['osc_send'])
+osc_dispatcher = Dispatcher()
+osc_dispatcher.map('/*', receive_osc_input)
+osc_in = BlockingOSCUDPServer((ip, ports['osc_receive']), osc_dispatcher)
+osc_in_stop_listening = launch_thread(lambda: osc_in.handle_request())
+# TODO: Call this function at some point. Alternatively, don't run this in a 
+# separate thread; this might not work with bluetooth because it's on the main
+# thread, but unsure (can't test from where I am).
+
 @app.route("/", methods=['GET', 'POST'])
 def hello_world():
     if request.method == 'POST':
@@ -79,18 +101,20 @@ def connect():
     return f'Connected to devices.'
 
 @app.route('/play', methods=['POST'])
-def play():
+def play(send_osc=True):
     global clients
     global midi
     if midi is None:
         return "Can't play."
     #currently no tick seek, just gonna write it at 0
+    if send_osc: osc_out.send_message('/resume', 1)
     asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-ab924709a558", bytes("0", 'utf-8')) for client in clients))
     return f'Playing.'
 
 @app.route('/stop', methods=['POST'])
-def stop():
+def stop(send_osc=True):
     # client.write_gatt_char(ble["stop"])
+    if send_osc: osc_out.send_message('/pause', 1)
     asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-bb924709a558", bytes("0", 'utf-8')) for client in clients))
     return f'Stopping.'
 
@@ -103,6 +127,7 @@ def send_vol(vol):
 @app.route('/tempo/<int:tempo>', methods=['POST'])
 def send_tempo(tempo):
     global clients
+    osc_out.send_message('/tempo', tempo)
     asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-eb924709a558", bytes(tempo, 'utf-8')) for client in clients))
     return f'Tempo sent: {tempo}'
 
@@ -111,5 +136,8 @@ def send_midi():
     global midi
     midi = request.data         # The contents of the MIDI file; not a file object.
     # client.write_gatt_char()
+    # NOTE: No longer sending this over OSC because file must be manually changed
+    # in Ableton Live. Not the cleanest, but given that we're not supporting changing
+    # the MIDI file in realtime over bluetooth anymore, this is fine.
     return f'MIDI sent.'
 
