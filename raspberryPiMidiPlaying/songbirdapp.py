@@ -7,6 +7,8 @@ import dbus.exceptions
 import dbus.mainloop.glib
 import dbus.service
 
+import songbird as sgb
+
 from ble import (
     Advertisement,
     Characteristic,
@@ -18,7 +20,6 @@ from ble import (
 )
 
 import struct
-import requests
 import array
 from enum import Enum
 
@@ -87,15 +88,17 @@ class SongbirdService(Service):
     SONGBIRD_SVC_UUID = "314b2cb7-d379-474f-832f-6f833657e7e2"
 
     def __init__(self, bus, index):
+        SongbirdService.songbird = sgb.Songbird()
         Service.__init__(self, bus, index, self.SONGBIRD_SVC_UUID, True)
-        self.add_characteristic(StartCharacteristic(bus, 0, self))
-        self.add_characteristic(StopCharacteristic(bus, 1, self))
-        self.add_characteristic(VolumeCharacteristic(bus, 2, self))
-        self.add_characteristic(TempoCharacteristic(bus, 3, self))
+        self.add_characteristic(VolumeCharacteristic(bus, 0, self))
+        self.add_characteristic(TempoCharacteristic(bus, 1, self))
+        self.add_characteristic(StartCharacteristic(bus, 2, self))
+        self.add_characteristic(StopCharacteristic(bus, 3, self))
+        
 
 class StartCharacteristic(Characteristic):
     uuid = "10f4c060-fdd1-49a5-898e-ab924709a558"
-    description = b"Start at specific timestamp."
+    description = b"Start at specific timestamp"
 
     def __init__(self, bus, index, service):
         Characteristic.__init__(
@@ -110,11 +113,16 @@ class StartCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
-        self.value = int(value) #if this doesn't work, int(bytes(value))
+        print("write to start detected with value " + str(int(bytes(value))))
+        try:
+            SongbirdService.songbird.start(int(bytes(value)))
+        except err:
+            print(err)
+        self.value = int(bytes(value))
 
 class StopCharacteristic(Characteristic):
     uuid = "10f4c060-fdd1-49a5-898e-bb924709a558"
-    description = b"Immediate stop."
+    description = b"Immediate stop"
 
     def __init__(self, bus, index, service):
         Characteristic.__init__(
@@ -129,7 +137,11 @@ class StopCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
-        self.value = int(value) #if this doesn't work, int(bytes(value))
+        try:
+            SongbirdService.songbird.stop()
+        except:
+            print("Unable to stop Songbird!")
+        self.value = int(bytes(value))
 
 class VolumeCharacteristic(Characteristic):
     uuid = "10f4c060-fdd1-49a5-898e-db924709a558"
@@ -148,7 +160,11 @@ class VolumeCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
-        self.value = int(value) #if this doesn't work, int(bytes(value))
+        try:
+            SongbirdService.songbird.adjust_volume(float(bytes(value)))
+        except:
+            print("Unable to adjust volume on Songbird!")
+        self.value = int(bytes(value))
 
 class TempoCharacteristic(Characteristic):
     uuid = "10f4c060-fdd1-49a5-898e-eb924709a558"
@@ -167,7 +183,11 @@ class TempoCharacteristic(Characteristic):
         return self.value
 
     def WriteValue(self, value, options):
-        self.value = int(value)
+        try:
+            SongbirdService.songbird.bpm(int(bytes(tempo)))
+        except:
+            print("Unable to adjust tempo on Songbird!")
+        self.value = int(bytes(value))
 
 class CharacteristicUserDescriptionDescriptor(Descriptor):
     """
@@ -213,7 +233,7 @@ def register_ad_error_cb(error):
 
 AGENT_PATH = "/home/pi/songbird/ble"
 
-def main():
+def main(*args, **kwargs):
     global mainloop
 
     dbus.mainloop.glib.DBusGMainLoop(set_as_default=True)
@@ -272,6 +292,7 @@ def main():
     mainloop.run()
     # ad_manager.UnregisterAdvertisement(advertisement)
     # dbus.service.Object.remove_from_connection(advertisement)
+    
 
 
 if __name__ == "__main__":
