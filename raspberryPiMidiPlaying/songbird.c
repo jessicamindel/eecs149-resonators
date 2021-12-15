@@ -63,7 +63,7 @@ static void *Songbird_start_playing(Songbird *self, PyObject *pyTick,PyObject *P
     fluid_player_play(self->player);
 }
 
-static void *Songbird_stop_playing(Songbird *self, ,PyObject *Py_UNUSED(ignored)) {
+static void *Songbird_stop_playing(Songbird *self, PyObject *Py_UNUSED(ignored)) {
     fluid_player_stop(self->player);
 }
 
