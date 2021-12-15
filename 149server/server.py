@@ -77,22 +77,26 @@ def play():
     global midi
     if midi is None:
         return "Can't play."
-    # client.write_gatt_char(ble["start"])
+    #currently no tick seek, just gonna write it at 0
+    asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-ab924709a558", bytes("0", 'utf-8')) for client in clients))
     return f'Playing.'
 
 @app.route('/stop', methods=['POST'])
 def stop():
     # client.write_gatt_char(ble["stop"])
+    asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-bb924709a558", bytes("0", 'utf-8')) for client in clients))
     return f'Stopping.'
 
 @app.route('/vol/<double:vol>', methods=['POST'])
 def send_vol(vol):
     global clients
+    asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-db924709a558", bytes(vol, 'utf-8')) for client in clients))
     return f'Vol sent: {vol}'
 
 @app.route('/tempo/<int:tempo>', methods=['POST'])
 def send_tempo(tempo):
     global clients
+    asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-eb924709a558", bytes(tempo, 'utf-8')) for client in clients))
     return f'Tempo sent: {tempo}'
 
 @app.route('/midi', methods=['POST'])
