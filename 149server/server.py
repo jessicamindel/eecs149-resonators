@@ -46,7 +46,7 @@ ports = {
 }
 
 # TODO: SET PORT HERE
-serialport = '/dev/tty.usbmodem0006825138641'
+serialport = 'COM5'
 baudrate = 115200
 
 ser = serial.Serial()
@@ -135,18 +135,29 @@ def stop(send_osc=True):
     asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-bb924709a558", bytes("0", 'utf-8')) for client in clients))
     return f'Stopping.'
 
-@app.route('/vol/<float:vol>', methods=['POST'])
-def send_vol(vol):
+@app.route('/incvol', methods=['POST'])
+def incvol():
     global clients
-    asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-db924709a558", bytes(vol, 'utf-8')) for client in clients))
-    return f'Vol sent: {vol}'
+    asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-db924709a558", bytes(1, 'utf-8')) for client in clients))
+    return f'Volume increased.'
 
-@app.route('/tempo/<int:tempo>', methods=['POST'])
-def send_tempo(tempo):
+@app.route('/decvol', methods=['POST'])
+def decvol():
     global clients
-    osc_out.send_message('/tempo', tempo)
-    asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-eb924709a558", bytes(tempo, 'utf-8')) for client in clients))
-    return f'Tempo sent: {tempo}'
+    asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-db924709a558", bytes(0, 'utf-8')) for client in clients))
+    return f'Volume decreased.'
+
+@app.route('/inctempo', methods=['POST'])
+def inctempo():
+    global clients
+    asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-eb924709a558", bytes(1, 'utf-8')) for client in clients))
+    return f'Increasing tempo.'
+
+@app.route('/dectempo', methods=['POST'])
+def dectempo():
+    global clients
+    asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-eb924709a558", bytes(2, 'utf-8')) for client in clients))
+    return f'Decreasing tempo.'
 
 @app.route('/midi', methods=['POST'])
 def send_midi():
