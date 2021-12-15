@@ -69,7 +69,7 @@ static void *Songbird_stop_playing(Songbird *self, PyObject *Py_UNUSED(ignored))
 }
 
 static void *Songbird_adjust_volume(Songbird *self, PyObject *Py_UNUSED(ignored), PyObject *pyVol) {
-    printf("got inside the func %s", pyVol);
+    printf("got inside the func %i", PyFloat_AsDouble(pyVol));
     fflush(stdout);
     fluid_synth_set_gain(self->synth, PyFloat_AsDouble(pyVol));
 }
