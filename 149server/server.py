@@ -12,6 +12,7 @@ from pythonosc.osc_server import BlockingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 from backend.thread_utils import launch_thread
 import subprocess
+from flask_executor import Executor
 
 
 #from . import _winrt
@@ -19,6 +20,7 @@ import subprocess
 
 app = Flask(__name__)
 CORS(app)
+executor = Executor(app)
 
 midi = None
 devices = []
@@ -115,6 +117,9 @@ def connect():
     #loop = asyncio.get_event_loop()
     global devices
     global proc
+    global executor
+
+    executor.submit(query_cereal)
 
     proc = subprocess.Popen("python bleakout.py", stdin=subprocess.PIPE,shell=True)
     return f'Connected to devices.'
@@ -197,6 +202,7 @@ def query_cereal():
             incvol()
             incTempo()
         time.sleep(1)
+        print("end query")
         if action != 4:
             return f'adjusting'
         return f'no adjust'
