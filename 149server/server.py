@@ -12,7 +12,6 @@ from pythonosc.osc_server import BlockingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 from backend.thread_utils import launch_thread
 import subprocess
-from concurrent.futures import ThreadPoolExecutor
 
 
 #from . import _winrt
@@ -54,8 +53,6 @@ ser = serial.Serial()
 ser.baudrate = baudrate
 ser.port = serialport
 ser.open()
-
-executor = ThreadPoolExecutor(2)
 
 # async def connect_to_device(address):
 #     global devices
@@ -119,8 +116,6 @@ def connect():
     global devices
     global proc
 
-    executor.submit(query_cereal)
-
     proc = subprocess.Popen("python bleakout.py", stdin=subprocess.PIPE,shell=True)
     return f'Connected to devices.'
 
@@ -128,8 +123,8 @@ def connect():
 def play(send_osc=True):
     global midi
     global proc
-    # if midi is None:
-    #    return "Can't play."
+    if midi is None:
+       return "Can't play."
     #currently no tick seek, just gonna write it at 0
     if send_osc: osc_out.send_message('/resume', 1)
     outs, errs = proc.communicate(input = bytes('0 0\n', "utf-8"))
@@ -178,32 +173,33 @@ def send_midi():
     return f'MIDI sent.'
 
 def query_cereal():
-    print("querying")
-    action = read_serial()
-    if action == 0:
-        decvol()
-        dectempo()
-    elif action == 1:
-        decvol()
-    elif action == 2:
-        decvol()
-        inctempo()
-    elif action == 3:
-        dectempo()
-    elif action == 5:
-        inctempo()
-    elif action == 6:
-        incvol()
-        dectempo()
-    elif action == 7:
-        incvol()
-    elif action == 8:
-        incvol()
-        incTempo()
-    time.sleep(0.5)
-    if action != 4:
-        return f'adjusting'
-    return f'no adjust'
+    while True:
+        print("querying")
+        action = read_serial()
+        if action == 0:
+            decvol()
+            dectempo()
+        elif action == 1:
+            decvol()
+        elif action == 2:
+            decvol()
+            inctempo()
+        elif action == 3:
+            dectempo()
+        elif action == 5:
+            inctempo()
+        elif action == 6:
+            incvol()
+            dectempo()
+        elif action == 7:
+            incvol()
+        elif action == 8:
+            incvol()
+            incTempo()
+        time.sleep(1)
+        if action != 4:
+            return f'adjusting'
+        return f'no adjust'
     
 
 # # TODO TEMP READ LOOP
