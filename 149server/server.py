@@ -2,7 +2,7 @@ from flask import Flask
 from flask import request
 from flask_cors import CORS
 #from backend/ble_utils import parse_ble_args    don't think we need to use here - Jet
-from bleak import BleakClient, BleakError
+#from bleak import BleakClient, BleakError
 import asyncio
 import sys
 import serial
@@ -12,6 +12,7 @@ from pythonosc.udp_client import SimpleUDPClient
 from pythonosc.osc_server import BlockingOSCUDPServer
 from pythonosc.dispatcher import Dispatcher
 from backend.thread_utils import launch_thread
+import subprocess
 
 
 #from . import _winrt
@@ -22,7 +23,7 @@ CORS(app)
 
 midi = None
 devices = []
-clients = []
+proc = None
 
 ble = {
     "service": "314b2cb7-d379-474f-832f-6f833657e7e2",
@@ -54,14 +55,14 @@ ser.baudrate = baudrate
 ser.port = serialport
 ser.open()
 
-async def connect_to_device(address):
-    global devices
-    global clients
-    async with BleakClient(address, timeout=60.0, use_cached=False) as client:
-        print(f"Connected: {address} {client.is_connected}")
-        clients += [client] #adds this client into the list so we can send to all simultaneously
-        while True:
-            await asyncio.sleep(1.0) #this keeps it connected hopefully forever
+# async def connect_to_device(address):
+#     global devices
+#     global clients
+#     async with BleakClient(address, timeout=60.0, use_cached=False) as client:
+#         print(f"Connected: {address} {client.is_connected}")
+#         clients += [client] #adds this client into the list so we can send to all simultaneously
+#         while True:
+#             await asyncio.sleep(1.0) #this keeps it connected hopefully forever
 
 # async def send(address, uuid, data):
 #     print(f"searching for device {address} ({timeout}s timeout)")
@@ -113,50 +114,47 @@ def add(address):
 #connects to all devices simultaneously
 @app.route('/connect', methods=['POST'])
 def connect():
+    #loop = asyncio.get_event_loop()
     global devices
-    asyncio.gather(*(connect_to_device(address) for address in devices))
+    global proc
+    proc = subprocess.Popen("bleakout.py")
     return f'Connected to devices.'
 
 @app.route('/play', methods=['POST'])
 def play(send_osc=True):
-    global clients
     global midi
     if midi is None:
         return "Can't play."
     #currently no tick seek, just gonna write it at 0
     if send_osc: osc_out.send_message('/resume', 1)
-    asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-ab924709a558", bytes("0", 'utf-8')) for client in clients))
+    outs, errs = proc.communicate("0 0")
     return f'Playing.'
 
 @app.route('/stop', methods=['POST'])
 def stop(send_osc=True):
     # client.write_gatt_char(ble["stop"])
     if send_osc: osc_out.send_message('/pause', 1)
-    asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-bb924709a558", bytes("0", 'utf-8')) for client in clients))
+    outs, errs = proc.communicate("1 0")
     return f'Stopping.'
 
 @app.route('/incvol', methods=['POST'])
 def incvol():
-    global clients
-    asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-db924709a558", bytes(1, 'utf-8')) for client in clients))
+    outs, errs = proc.communicate("2 1")
     return f'Volume increased.'
 
 @app.route('/decvol', methods=['POST'])
 def decvol():
-    global clients
-    asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-db924709a558", bytes(0, 'utf-8')) for client in clients))
+    outs, errs = proc.communicate("2 0")
     return f'Volume decreased.'
 
 @app.route('/inctempo', methods=['POST'])
 def inctempo():
-    global clients
-    asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-eb924709a558", bytes(1, 'utf-8')) for client in clients))
+    outs, errs = proc.communicate("3 1")
     return f'Increasing tempo.'
 
 @app.route('/dectempo', methods=['POST'])
 def dectempo():
-    global clients
-    asyncio.gather(*(client.write_gatt_char("10f4c060-fdd1-49a5-898e-eb924709a558", bytes(2, 'utf-8')) for client in clients))
+    outs, errs = proc.communicate("3 0")
     return f'Decreasing tempo.'
 
 @app.route('/midi', methods=['POST'])
